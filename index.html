@@ -1,2065 +1,1493 @@
+Tienes toda la razón. La función `scrollToGroup` actual **asume que el grupo está visible**, pero si el usuario ha aplicado filtros (por categoría, país o plataforma), es posible que el grupo no esté en el DOM o no sea visible, por lo que el scroll falla o no tiene sentido.
+
+La solución correcta es:
+
+1. **Quitar todos los filtros activos** (volver a "Todos" en categoría, país y ambas plataformas).
+2. **Volver a renderizar la lista completa de grupos**.
+3. **Hacer scroll suave al grupo deseado** una vez que esté garantizado que está en el DOM y visible.
+
+Aquí está el código HTML **actualizado con la lógica corregida** para el carrusel y la navegación:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Directorio de Grupos - WhatsApp & Telegram</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* NAVEGACIÓN MEJORADA */
-        .main-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            position: sticky;
-            top: 15px;
-            z-index: 1000;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-        
-        .nav-brand h1 {
-            font-size: 1.6rem;
-            color: #333;
-            background: linear-gradient(135deg, #25D366 0%, #0088cc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            white-space: nowrap;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            background: #f8f9fa;
-            padding: 6px;
-            border-radius: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .nav-link {
-            padding: 12px 22px;
-            border: none;
-            background: transparent;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #555;
-            white-space: nowrap;
-        }
-        
-        .nav-link:hover {
-            color: #25D366;
-            background: rgba(37, 211, 102, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .nav-link.active {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
-        }
-        
-        .nav-link.add-group.active {
-            background: linear-gradient(135deg, #ff9f43 0%, #ff7f00 100%);
-            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.25);
-        }
-        
-        /* PÁGINAS */
-        .page {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .page.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* HEADER DE PÁGINA RESPONSIVE */
-        .page-header {
-            text-align: center;
-            padding: 30px 20px;
-            background: linear-gradient(135deg, #25D366 0%, #0088cc 100%);
-            color: white;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .page-header.add-page {
-            background: linear-gradient(135deg, #ff9f43 0%, #ff7f00 100%);
-        }
-        
-        .page-header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 12px;
-            position: relative;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            word-wrap: break-word;
-            padding: 0 10px;
-        }
-        
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.95;
-            max-width: 700px;
-            margin: 0 auto;
-            position: relative;
-            padding: 0 15px;
-            line-height: 1.5;
-        }
-        
-        /* SELECTOR DE PLATAFORMA RESPONSIVE */
-        .platform-selector {
-            display: flex;
-            justify-content: center;
-            margin: 0 auto 40px;
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            border-radius: 14px;
-            padding: 6px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .platform-btn {
-            flex: 1;
-            padding: 16px 10px;
-            border: none;
-            background: transparent;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            min-width: 0;
-        }
-        
-        .platform-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            border-radius: 10px;
-            transform: scale(0);
-            transition: transform 0.3s ease;
-            z-index: -1;
-        }
-        
-        .platform-btn.telegram::before {
-            background: linear-gradient(135deg, #0088cc 0%, #005c8a 100%);
-        }
-        
-        .platform-btn.active {
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        }
-        
-        .platform-btn.active::before {
-            transform: scale(1);
-        }
-        
-        .platform-icon {
-            font-size: 1.8rem;
-            transition: all 0.3s ease;
-        }
-        
-        .platform-btn.active .platform-icon {
-            transform: scale(1.1);
-        }
-        
-        .btn-text {
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            text-align: center;
-        }
-        
-        /* SECCIÓN DE DESTACADOS RESPONSIVE */
-        .featured-section {
-            margin-bottom: 40px;
-        }
-        
-        .section-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(37, 211, 102, 0.15);
-            text-align: center;
-        }
-        
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .section-title h2 {
-            font-size: 1.8rem;
-            color: #333;
-            position: relative;
-            line-height: 1.3;
-            word-wrap: break-word;
-            max-width: 100%;
-        }
-        
-        .featured-badge {
-            background: linear-gradient(135deg, #ff9f43, #ff7f00);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.2);
-            white-space: nowrap;
-        }
-        
-        /* GRID DE DESTACADOS RESPONSIVE */
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        
-        /* TARJETA DESTACADA RESPONSIVE - CORREGIDA */
-        .featured-card {
-            background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            position: relative;
-            border: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .featured-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-        }
-        
-        .featured-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #25D366, #0088cc);
-            z-index: 2;
-        }
-        
-        .featured-card.whatsapp::before {
-            background: linear-gradient(90deg, #25D366, #128C7E);
-        }
-        
-        .featured-card.telegram::before {
-            background: linear-gradient(90deg, #0088cc, #005c8a);
-        }
-        
-        /* CORRECCIÓN: HEADER CON MÁS ESPACIO */
-        .featured-header {
-            padding: 25px 20px 20px;
-            position: relative;
-        }
-        
-        /* CORRECCIÓN: ETIQUETA DESTACADO MEJORADA */
-        .featured-tag {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(135deg, #ff4757, #ff3838);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 18px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 3px 8px rgba(255, 71, 87, 0.25);
-            z-index: 3;
-            max-width: 120px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .featured-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .featured-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid white;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            flex-shrink: 0;
-        }
-        
-        .featured-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* CORRECCIÓN: INFO CON ESPACIO PARA ETIQUETA */
-        .featured-info {
-            flex: 1;
-            min-width: 0;
-            padding-right: 110px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .featured-info h3 {
-            font-size: 1.3rem;
-            margin-bottom: 6px;
-            color: #333;
-            line-height: 1.3;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
-        }
-        
-        .featured-platform {
-            display: inline-block;
-            padding: 5px 12px;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border-radius: 18px;
-            margin-bottom: 8px;
-        }
-        
-        .featured-card.telegram .featured-platform {
-            background: linear-gradient(135deg, #0088cc 0%, #005c8a 100%);
-        }
-        
-        .featured-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #666;
-            font-size: 0.85rem;
-        }
-        
-        .stat-item i {
-            color: #25D366;
-        }
-        
-        .featured-card.telegram .stat-item i {
-            color: #0088cc;
-        }
-        
-        .featured-content {
-            padding: 0 20px 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .featured-description {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            flex-grow: 1;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        
-        .featured-highlights {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .highlight {
-            background: rgba(37, 211, 102, 0.1);
-            color: #128C7E;
-            padding: 5px 12px;
-            border-radius: 18px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        
-        .featured-card.telegram .highlight {
-            background: rgba(0, 136, 204, 0.1);
-            color: #005c8a;
-        }
-        
-        .featured-link {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            text-align: center;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            letter-spacing: 0.3px;
-            margin-top: auto;
-        }
-        
-        .featured-card.telegram .featured-link {
-            background: linear-gradient(135deg, #0088cc 0%, #005c8a 100%);
-        }
-        
-        .featured-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(37, 211, 102, 0.25);
-        }
-        
-        /* CONTADOR DE GRUPOS RESPONSIVE */
-        .groups-counter {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px auto;
-            max-width: 500px;
-            flex-wrap: wrap;
-        }
-        
-        .counter-item {
-            text-align: center;
-            background: white;
-            padding: 18px 24px;
-            border-radius: 14px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-            transition: transform 0.3s ease;
-            flex: 1;
-            min-width: 140px;
-        }
-        
-        .counter-item:hover {
-            transform: translateY(-5px);
-        }
-        
-        .counter-item.whatsapp {
-            border-top: 4px solid #25D366;
-        }
-        
-        .counter-item.telegram {
-            border-top: 4px solid #0088cc;
-        }
-        
-        .counter-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            line-height: 1;
-        }
-        
-        .counter-item.whatsapp .counter-number {
-            color: #25D366;
-        }
-        
-        .counter-item.telegram .counter-number {
-            color: #0088cc;
-        }
-        
-        .counter-label {
-            font-size: 0.95rem;
-            color: #666;
-            font-weight: 600;
-        }
-        
-        /* CATEGORÍAS RESPONSIVE */
-        .categories-section {
-            margin-bottom: 40px;
-        }
-        
-        .categories-title {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-            position: relative;
-            padding-bottom: 12px;
-            line-height: 1.3;
-        }
-        
-        .categories {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-        }
-        
-        .category-btn {
-            padding: 12px 22px;
-            background: white;
-            border: 2px solid #eaeaea;
-            border-radius: 45px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-        
-        .category-btn.active {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            border-color: #25D366;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.2);
-        }
-        
-        /* GRUPOS RESPONSIVE */
-        .groups-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        
-        .group-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .group-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
-        }
-        
-        /* PÁGINA DE AÑADIR GRUPO RESPONSIVE */
-        .add-group-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 18px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-        
-        .form-title {
-            font-size: 1.8rem;
-            color: #333;
-            margin-bottom: 25px;
-            text-align: center;
-            position: relative;
-            padding-bottom: 12px;
-            line-height: 1.3;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 1rem;
-        }
-        
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #25D366;
-            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
-        }
-        
-        .platform-options {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .platform-option {
-            flex: 1;
-            text-align: center;
-            padding: 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-            min-width: 140px;
-        }
-        
-        .platform-option.active {
-            border-color: #25D366;
-            background: rgba(37, 211, 102, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.15);
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .submit-btn {
-            flex: 2;
-            padding: 16px;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            min-width: 200px;
-        }
-        
-        .reset-btn {
-            flex: 1;
-            padding: 16px;
-            background: #f5f5f5;
-            color: #666;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-        
-        /* FOOTER RESPONSIVE */
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: #666;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-            margin-top: 40px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
-        }
-        
-        .footer-nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .footer-nav .nav-link {
-            padding: 10px 20px;
-            background: #f8f9fa;
-            color: #555;
-        }
-        
-        .footer-nav .nav-link:hover {
-            background: rgba(37, 211, 102, 0.1);
-        }
-        
-        /* NUEVOS ESTILOS PARA MEJORAS */
-        .search-container {
-            margin: 20px auto 30px;
-            max-width: 600px;
-        }
-        
-        .search-box {
-            width: 100%;
-            padding: 15px 25px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .search-box:focus {
-            outline: none;
-            border-color: #25D366;
-            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.1);
-        }
-        
-        .field-error {
-            color: #ff4757;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: block;
-        }
-        
-        .loading-indicator {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-        
-        .loading-indicator.active {
-            display: block;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            grid-column: 1 / -1;
-        }
-        
-        .empty-state i {
-            font-size: 3rem;
-            color: #ddd;
-            margin-bottom: 15px;
-        }
-        
-        /* RESPONSIVE ADAPTACIONES ESPECÍFICAS */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .main-nav {
-                flex-direction: column;
-                text-align: center;
-                padding: 15px;
-                gap: 12px;
-            }
-            
-            .nav-brand h1 {
-                font-size: 1.5rem;
-            }
-            
-            .nav-links {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .nav-link {
-                padding: 10px 18px;
-                font-size: 0.95rem;
-            }
-            
-            .page-header {
-                padding: 25px 15px;
-            }
-            
-            .page-header h1 {
-                font-size: 1.8rem;
-                padding: 0 5px;
-            }
-            
-            .page-header p {
-                font-size: 1rem;
-                padding: 0 10px;
-            }
-            
-            .platform-selector {
-                margin-bottom: 30px;
-            }
-            
-            .platform-btn {
-                padding: 14px 8px;
-            }
-            
-            .platform-icon {
-                font-size: 1.6rem;
-            }
-            
-            .btn-text {
-                font-size: 0.95rem;
-            }
-            
-            .section-title h2 {
-                font-size: 1.6rem;
-            }
-            
-            .featured-badge {
-                padding: 7px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .featured-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .featured-card {
-                max-width: 100%;
-            }
-            
-            .featured-avatar {
-                width: 60px;
-                height: 60px;
-            }
-            
-            /* CORRECCIÓN MOBILE: ETIQUETA MÁS PEQUEÑA */
-            .featured-tag {
-                top: 10px;
-                right: 10px;
-                padding: 4px 10px;
-                font-size: 0.7rem;
-                max-width: 100px;
-            }
-            
-            .featured-info {
-                padding-right: 90px;
-            }
-            
-            .featured-info h3 {
-                font-size: 1.2rem;
-                max-width: calc(100% - 100px);
-            }
-            
-            .groups-counter {
-                gap: 15px;
-            }
-            
-            .counter-item {
-                min-width: calc(50% - 15px);
-                padding: 15px;
-            }
-            
-            .counter-number {
-                font-size: 2rem;
-            }
-            
-            .categories {
-                padding: 15px;
-                gap: 10px;
-            }
-            
-            .category-btn {
-                padding: 10px 18px;
-                font-size: 0.9rem;
-            }
-            
-            .groups-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
-            
-            .form-title {
-                font-size: 1.6rem;
-            }
-            
-            .platform-options {
-                flex-direction: column;
-            }
-            
-            .platform-option {
-                width: 100%;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-            
-            .submit-btn, .reset-btn {
-                width: 100%;
-                min-width: auto;
-            }
-            
-            .footer-nav {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .footer-nav .nav-link {
-                width: 200px;
-                justify-content: center;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .nav-brand h1 {
-                font-size: 1.4rem;
-            }
-            
-            .nav-link {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .page-header h1 {
-                font-size: 1.6rem;
-            }
-            
-            .section-title h2 {
-                font-size: 1.4rem;
-            }
-            
-            .featured-badge {
-                font-size: 0.85rem;
-                padding: 6px 12px;
-            }
-            
-            /* CORRECCIÓN PARA MÓVIL PEQUEÑO */
-            .featured-profile {
-                flex-direction: column;
-                text-align: center;
-                gap: 12px;
-            }
-            
-            .featured-avatar {
-                width: 80px;
-                height: 80px;
-            }
-            
-            /* EN MÓVILES PEQUEÑOS, LA ETIQUETA VA ABAJO */
-            .featured-tag {
-                position: relative;
-                top: 0;
-                right: 0;
-                align-self: flex-start;
-                margin-bottom: 10px;
-                max-width: none;
-                width: fit-content;
-            }
-            
-            .featured-header {
-                padding: 20px;
-            }
-            
-            .featured-info {
-                padding-right: 0;
-            }
-            
-            .featured-info h3 {
-                max-width: 100%;
-            }
-            
-            .featured-stats {
-                justify-content: center;
-            }
-            
-            .counter-item {
-                min-width: 100%;
-            }
-            
-            .category-btn {
-                padding: 8px 15px;
-                font-size: 0.85rem;
-            }
-            
-            .form-container {
-                padding: 15px;
-            }
-            
-            .form-title {
-                font-size: 1.4rem;
-            }
-        }
-        
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .featured-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .groups-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Directorio de Grupos - WhatsApp & Telegram</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+background-color: #f5f7fa;
+color: #333;
+line-height: 1.6;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+}
+/* NAVEGACIÓN MEJORADA */
+.main-nav {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: white;
+padding: 15px 25px;
+border-radius: 16px;
+margin-bottom: 30px;
+box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+position: sticky;
+top: 15px;
+z-index: 1000;
+flex-wrap: wrap;
+gap: 15px;
+}
+.nav-brand {
+display: flex;
+align-items: center;
+gap: 12px;
+text-decoration: none;
+flex-shrink: 0;
+}
+.nav-brand h1 {
+font-size: 1.6rem;
+color: #333;
+background: linear-gradient(135deg, #25D366 0%, #0088cc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+white-space: nowrap;
+}
+.nav-links {
+display: flex;
+gap: 10px;
+background: #f8f9fa;
+padding: 6px;
+border-radius: 12px;
+flex-wrap: wrap;
+justify-content: center;
+}
+.nav-link {
+padding: 12px 22px;
+border: none;
+background: transparent;
+border-radius: 10px;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+gap: 8px;
+color: #555;
+white-space: nowrap;
+}
+.nav-link:hover {
+color: #25D366;
+background: rgba(37, 211, 102, 0.1);
+transform: translateY(-2px);
+}
+.nav-link.active {
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+color: white;
+box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+.nav-link.add-group.active {
+background: linear-gradient(135deg, #ff9f43 0%, #ff7f00 100%);
+box-shadow: 0 4px 12px rgba(255, 159, 67, 0.25);
+}
+/* BARRA DE BÚSQUEDA */
+.search-bar-container {
+margin-bottom: 30px;
+display: flex;
+justify-content: center;
+}
+.search-bar {
+width: 100%;
+max-width: 700px;
+display: flex;
+gap: 10px;
+}
+.search-input {
+flex: 1;
+padding: 14px 20px;
+border: 2px solid #e0e0e0;
+border-radius: 12px 0 0 12px;
+font-size: 1rem;
+transition: all 0.3s ease;
+outline: none;
+}
+.search-input:focus {
+border-color: #25D366;
+box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+}
+.search-btn {
+padding: 14px 24px;
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+color: white;
+border: none;
+border-radius: 0 12px 12px 0;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+.search-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+/* PÁGINAS */
+.page {
+display: none;
+animation: fadeIn 0.5s ease;
+}
+.page.active {
+display: block;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+/* HEADER DE PÁGINA RESPONSIVE */
+.page-header {
+text-align: center;
+padding: 30px 20px;
+background: linear-gradient(135deg, #25D366 0%, #0088cc 100%);
+color: white;
+border-radius: 16px;
+margin-bottom: 30px;
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+position: relative;
+overflow: hidden;
+}
+.page-header.add-page {
+background: linear-gradient(135deg, #ff9f43 0%, #ff7f00 100%);
+}
+.page-header h1 {
+font-size: 2.2rem;
+margin-bottom: 12px;
+position: relative;
+text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+word-wrap: break-word;
+padding: 0 10px;
+}
+.page-header p {
+font-size: 1.1rem;
+opacity: 0.95;
+max-width: 700px;
+margin: 0 auto;
+position: relative;
+padding: 0 15px;
+line-height: 1.5;
+}
+/* CARRUSEL DE GRUPOS DESTACADOS */
+.featured-groups-section {
+margin-bottom: 30px;
+}
+.featured-groups-title {
+text-align: center;
+font-size: 1.5rem;
+margin-bottom: 20px;
+color: #333;
+font-weight: 700;
+}
+.featured-groups-carousel {
+display: flex;
+overflow-x: auto;
+scrollbar-width: thin;
+scrollbar-color: #25D366 #f0f0f0;
+padding: 15px 0;
+gap: 20px;
+margin: 0 10px;
+}
+.featured-groups-carousel::-webkit-scrollbar {
+height: 8px;
+}
+.featured-groups-carousel::-webkit-scrollbar-track {
+background: #f0f0f0;
+border-radius: 4px;
+}
+.featured-groups-carousel::-webkit-scrollbar-thumb {
+background: #25D366;
+border-radius: 4px;
+}
+.featured-group-card {
+min-width: 180px;
+background: white;
+border-radius: 16px;
+padding: 20px;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+text-align: center;
+transition: all 0.3s ease;
+flex-shrink: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+.featured-group-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+.featured-group-logo {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+overflow: hidden;
+margin-bottom: 15px;
+border: 3px solid #f0f0f0;
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.featured-group-logo img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+.featured-group-title {
+font-size: 1rem;
+font-weight: 700;
+margin-bottom: 10px;
+color: #333;
+line-height: 1.3;
+}
+.featured-group-view-btn {
+padding: 8px 16px;
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+color: white;
+border: none;
+border-radius: 8px;
+font-size: 0.9rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+text-decoration: none;
+display: inline-block;
+}
+.featured-group-view-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+/* SELECTOR DE PLATAFORMA RESPONSIVE */
+.platform-selector {
+display: flex;
+justify-content: center;
+margin: 0 auto 20px;
+width: 100%;
+max-width: 500px;
+background: white;
+border-radius: 14px;
+padding: 6px;
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+border: 1px solid rgba(0,0,0,0.05);
+}
+.platform-btn {
+flex: 1;
+padding: 16px 10px;
+border: none;
+background: transparent;
+border-radius: 10px;
+font-size: 1rem;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 8px;
+position: relative;
+overflow: hidden;
+z-index: 1;
+min-width: 0;
+}
+.platform-btn::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+border-radius: 10px;
+transform: scale(0);
+transition: transform 0.3s ease;
+z-index: -1;
+}
+.platform-btn.telegram::before {
+background: linear-gradient(135deg, #0088cc 0%, #005c8a 100%);
+}
+.platform-btn.active {
+color: white;
+transform: translateY(-2px);
+box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.platform-btn.active::before {
+transform: scale(1);
+}
+.platform-icon {
+font-size: 1.8rem;
+transition: all 0.3s ease;
+}
+.platform-btn.active .platform-icon {
+transform: scale(1.1);
+}
+.btn-text {
+font-size: 1rem;
+font-weight: 700;
+letter-spacing: 0.3px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+width: 100%;
+text-align: center;
+}
+/* FILTROS DE PAÍS */
+.country-filters {
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 8px;
+margin: 20px auto 30px;
+max-width: 900px;
+background: white;
+padding: 15px;
+border-radius: 14px;
+box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+.country-btn {
+padding: 6px 12px;
+background: #f8f9fa;
+border: 2px solid #eaeaea;
+border-radius: 30px;
+font-size: 0.85rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+gap: 5px;
+white-space: nowrap;
+}
+.country-btn.active {
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+color: white;
+border-color: #25D366;
+transform: translateY(-2px);
+box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+}
+.country-flag {
+font-size: 1.1rem;
+}
+/* CONTADOR DE GRUPOS RESPONSIVE */
+.groups-counter {
+display: flex;
+justify-content: center;
+gap: 20px;
+margin: 30px auto;
+max-width: 500px;
+flex-wrap: wrap;
+}
+.counter-item {
+text-align: center;
+background: white;
+padding: 18px 24px;
+border-radius: 14px;
+box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+transition: transform 0.3s ease;
+flex: 1;
+min-width: 140px;
+}
+.counter-item:hover {
+transform: translateY(-5px);
+}
+.counter-item.whatsapp {
+border-top: 4px solid #25D366;
+}
+.counter-item.telegram {
+border-top: 4px solid #0088cc;
+}
+.counter-number {
+font-size: 2.5rem;
+font-weight: 800;
+margin-bottom: 8px;
+line-height: 1;
+}
+.counter-item.whatsapp .counter-number {
+color: #25D366;
+}
+.counter-item.telegram .counter-number {
+color: #0088cc;
+}
+.counter-label {
+font-size: 0.95rem;
+color: #666;
+font-weight: 600;
+}
+/* CATEGORÍAS RESPONSIVE */
+.categories-section {
+margin-bottom: 40px;
+}
+.categories-title {
+font-size: 1.8rem;
+margin-bottom: 20px;
+color: #333;
+text-align: center;
+position: relative;
+padding-bottom: 12px;
+line-height: 1.3;
+}
+.categories {
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 10px;
+margin-bottom: 30px;
+padding: 20px;
+background: white;
+border-radius: 16px;
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+.category-btn {
+padding: 10px 18px;
+background: white;
+border: 2px solid #eaeaea;
+border-radius: 45px;
+font-size: 0.9rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+gap: 6px;
+white-space: nowrap;
+}
+.category-btn.active {
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+color: white;
+border-color: #25D366;
+transform: translateY(-3px);
+box-shadow: 0 6px 15px rgba(37, 211, 102, 0.2);
+}
+/* GRUPOS RESPONSIVE */
+.groups-container {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+gap: 25px;
+margin-bottom: 40px;
+}
+.group-card {
+background: white;
+border-radius: 16px;
+overflow: hidden;
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+transition: all 0.3s ease;
+display: flex;
+flex-direction: column;
+position: relative;
+border: 1px solid rgba(0,0,0,0.05);
+}
+.group-card:hover {
+transform: translateY(-8px);
+box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+.group-country {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+background: #e9ecef;
+padding: 4px 10px;
+border-radius: 16px;
+font-size: 0.8rem;
+font-weight: 600;
+margin-top: 8px;
+}
+/* PÁGINA DE AÑADIR GRUPO RESPONSIVE */
+.add-group-container {
+max-width: 800px;
+margin: 0 auto;
+}
+.form-container {
+background: white;
+padding: 30px;
+border-radius: 18px;
+box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+margin-bottom: 30px;
+}
+.form-title {
+font-size: 1.8rem;
+color: #333;
+margin-bottom: 25px;
+text-align: center;
+position: relative;
+padding-bottom: 12px;
+line-height: 1.3;
+}
+.form-group {
+margin-bottom: 20px;
+}
+.form-label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: #555;
+font-size: 1rem;
+}
+.form-input, .form-select, .form-textarea {
+width: 100%;
+padding: 14px 18px;
+border: 2px solid #e0e0e0;
+border-radius: 10px;
+font-size: 1rem;
+transition: all 0.3s ease;
+background: white;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+outline: none;
+border-color: #25D366;
+box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+}
+.platform-options {
+display: flex;
+gap: 12px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+.platform-option {
+flex: 1;
+text-align: center;
+padding: 18px;
+border: 2px solid #e0e0e0;
+border-radius: 10px;
+cursor: pointer;
+transition: all 0.3s ease;
+background: white;
+min-width: 140px;
+}
+.platform-option.active {
+border-color: #25D366;
+background: rgba(37, 211, 102, 0.1);
+transform: translateY(-2px);
+box-shadow: 0 6px 15px rgba(37, 211, 102, 0.15);
+}
+.form-actions {
+display: flex;
+gap: 15px;
+margin-top: 30px;
+flex-wrap: wrap;
+}
+.submit-btn {
+flex: 2;
+padding: 16px;
+background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+color: white;
+border: none;
+border-radius: 10px;
+font-size: 1.1rem;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+min-width: 200px;
+}
+.reset-btn {
+flex: 1;
+padding: 16px;
+background: #f5f5f5;
+color: #666;
+border: 2px solid #e0e0e0;
+border-radius: 10px;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+min-width: 120px;
+}
+/* FOOTER RESPONSIVE */
+footer {
+text-align: center;
+padding: 30px 20px;
+color: #666;
+font-size: 0.9rem;
+border-top: 1px solid #eee;
+margin-top: 40px;
+background: white;
+border-radius: 16px;
+box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+}
+.footer-nav {
+display: flex;
+justify-content: center;
+gap: 15px;
+margin: 20px 0;
+flex-wrap: wrap;
+}
+.footer-nav .nav-link {
+padding: 10px 20px;
+background: #f8f9fa;
+color: #555;
+}
+.footer-nav .nav-link:hover {
+background: rgba(37, 211, 102, 0.1);
+}
+/* RESPONSIVE ADAPTACIONES ESPECÍFICAS */
+@media (max-width: 768px) {
+.container {
+padding: 15px;
+}
+.main-nav {
+flex-direction: column;
+text-align: center;
+padding: 15px;
+gap: 12px;
+}
+.nav-brand h1 {
+font-size: 1.5rem;
+}
+.nav-links {
+width: 100%;
+justify-content: center;
+}
+.nav-link {
+padding: 10px 18px;
+font-size: 0.95rem;
+}
+.page-header {
+padding: 25px 15px;
+}
+.page-header h1 {
+font-size: 1.8rem;
+padding: 0 5px;
+}
+.page-header p {
+font-size: 1rem;
+padding: 0 10px;
+}
+.platform-selector {
+margin-bottom: 20px;
+}
+.platform-btn {
+padding: 14px 8px;
+}
+.platform-icon {
+font-size: 1.6rem;
+}
+.btn-text {
+font-size: 0.95rem;
+}
+.search-bar {
+flex-direction: column;
+}
+.search-input,
+.search-btn {
+width: 100%;
+border-radius: 12px !important;
+}
+.country-filters {
+padding: 10px;
+gap: 6px;
+flex-wrap: wrap;
+}
+.country-btn {
+padding: 5px 10px;
+font-size: 0.8rem;
+}
+.groups-counter {
+gap: 15px;
+}
+.counter-item {
+min-width: calc(50% - 15px);
+padding: 15px;
+}
+.counter-number {
+font-size: 2rem;
+}
+.categories {
+padding: 15px;
+gap: 8px;
+}
+.category-btn {
+padding: 8px 15px;
+font-size: 0.85rem;
+}
+.groups-container {
+grid-template-columns: 1fr;
+gap: 20px;
+}
+.featured-group-card {
+min-width: 140px;
+}
+.featured-group-logo {
+width: 60px;
+height: 60px;
+}
+.featured-group-title {
+font-size: 0.9rem;
+}
+.form-container {
+padding: 20px;
+}
+.form-title {
+font-size: 1.6rem;
+}
+.platform-options {
+flex-direction: column;
+}
+.platform-option {
+width: 100%;
+}
+.form-actions {
+flex-direction: column;
+}
+.submit-btn, .reset-btn {
+width: 100%;
+min-width: auto;
+}
+.footer-nav {
+flex-direction: column;
+align-items: center;
+}
+.footer-nav .nav-link {
+width: 200px;
+justify-content: center;
+}
+}
+@media (max-width: 480px) {
+.nav-brand h1 {
+font-size: 1.4rem;
+}
+.nav-link {
+padding: 8px 15px;
+font-size: 0.9rem;
+}
+.page-header h1 {
+font-size: 1.6rem;
+}
+.counter-item {
+min-width: 100%;
+}
+.category-btn {
+padding: 6px 12px;
+font-size: 0.8rem;
+}
+.country-btn {
+padding: 4px 8px;
+font-size: 0.75rem;
+}
+.form-container {
+padding: 15px;
+}
+.form-title {
+font-size: 1.4rem;
+}
+.featured-group-card {
+min-width: 120px;
+}
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+.groups-container {
+grid-template-columns: repeat(2, 1fr);
+}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- NAVEGACIÓN MEJORADA -->
-        <nav class="main-nav">
-            <a href="#" class="nav-brand">
-                <i class="fas fa-users" style="font-size: 1.8rem; color: #25D366;"></i>
-                <h1>INGROUPS</h1>
-            </a>
-            
-            <div class="nav-links">
-                <button class="nav-link active" id="view-groups-btn">
-                    <i class="fas fa-search"></i>
-                    Ver Grupos
-                </button>
-                <button class="nav-link add-group" id="add-group-btn">
-                    <i class="fas fa-plus-circle"></i>
-                    Añadir Grupo
-                </button>
-            </div>
-        </nav>
+<div class="container">
+<!-- NAVEGACIÓN MEJORADA -->
+<nav class="main-nav">
+<a href="#" class="nav-brand">
+<i class="fas fa-users" style="font-size: 1.8rem; color: #25D366;"></i>
+<h1>Directorio de Grupos</h1>
+</a>
+<div class="nav-links">
+<button class="nav-link active" id="view-groups-btn">
+<i class="fas fa-search"></i>
+Ver Grupos
+</button>
+<button class="nav-link add-group" id="add-group-btn">
+<i class="fas fa-plus-circle"></i>
+Añadir Grupo
+</button>
+</div>
+</nav>
+<!-- PÁGINA 1: VER GRUPOS -->
+<div id="view-groups-page" class="page active">
+<header class="page-header">
+<h1><i class="fas fa-users"></i> Directorio de Grupos</h1>
+<p>Descubre los mejores grupos de WhatsApp y Telegram según tus intereses</p>
+</header>
 
-        <!-- PÁGINA 1: VER GRUPOS -->
-        <div id="view-groups-page" class="page active">
-            <header class="page-header">
-                <h1><i class="fas fa-users"></i> Directorio de Grupos</h1>
-                <p>Descubre los mejores grupos de WhatsApp y Telegram según tus intereses</p>
-            </header>
-            
-            <!-- SELECTOR DE PLATAFORMA -->
-            <div class="platform-selector">
-                <button class="platform-btn whatsapp active" id="whatsapp-btn">
-                    <i class="fab fa-whatsapp platform-icon"></i>
-                    <span class="btn-text">WhatsApp</span>
-                </button>
-                
-                <button class="platform-btn telegram" id="telegram-btn">
-                    <i class="fab fa-telegram platform-icon"></i>
-                    <span class="btn-text">Telegram</span>
-                </button>
-            </div>
-            
-            <!-- BARRA DE BÚSQUEDA -->
-            <div class="search-container">
-                <input type="text" id="group-search" class="search-box" 
-                       placeholder="🔍 Buscar grupos por nombre, descripción o categoría...">
-            </div>
-            
-            <!-- SECCIÓN DE GRUPOS DESTACADOS -->
-            <section class="featured-section">
-                <div class="section-header">
-                    <div class="section-title">
-                        <i class="fas fa-crown" style="font-size: 2rem; color: #ff9f43;"></i>
-                        <h2>Grupos Destacados</h2>
-                    </div>
-                    <div class="featured-badge">
-                        <i class="fas fa-fire"></i>
-                        Recomendados por la comunidad
-                    </div>
-                </div>
-                
-                <!-- GRID DE DESTACADOS - AHORA CON TÍTULOS VISIBLES -->
-                <div class="featured-grid" id="featured-grid">
-                    <!-- Los grupos destacados se cargarán aquí -->
-                </div>
-            </section>
-            
-            <!-- CONTADOR DE GRUPOS -->
-            <div class="groups-counter">
-                <div class="counter-item whatsapp">
-                    <div class="counter-number" id="whatsapp-count">0</div>
-                    <div class="counter-label">Grupos de WhatsApp</div>
-                </div>
-                
-                <div class="counter-item telegram">
-                    <div class="counter-number" id="telegram-count">0</div>
-                    <div class="counter-label">Grupos de Telegram</div>
-                </div>
-            </div>
-            
-            <!-- SECCIÓN DE CATEGORÍAS -->
-            <section class="categories-section">
-                <h2 class="categories-title">Explora por Categorías</h2>
-                
-                <div class="categories">
-                    <button class="category-btn active" data-category="all">
-                        <i class="fas fa-globe"></i> Todos
-                    </button>
-                    <button class="category-btn" data-category="mascotas">
-                        <i class="fas fa-paw"></i> Mascotas
-                    </button>
-                    <button class="category-btn" data-category="comunicacion">
-                        <i class="fas fa-comments"></i> Comunicación
-                    </button>
-                    <button class="category-btn" data-category="deportes">
-                        <i class="fas fa-futbol"></i> Deportes
-                    </button>
-                    <button class="category-btn" data-category="tecnologia">
-                        <i class="fas fa-laptop-code"></i> Tecnología
-                    </button>
-                    <button class="category-btn" data-category="ocio">
-                        <i class="fas fa-gamepad"></i> Ocio
-                    </button>
-                    <button class="category-btn" data-category="educacion">
-                        <i class="fas fa-graduation-cap"></i> Educación
-                    </button>
-                    <button class="category-btn" data-category="negocios">
-                        <i class="fas fa-briefcase"></i> Negocios
-                    </button>
-                    <button class="category-btn" data-category="musica">
-                        <i class="fas fa-music"></i> Música
-                    </button>
-                </div>
-                
-                <!-- GRUPOS NORMALES -->
-                <div class="groups-container" id="groups-container">
-                    <!-- Los grupos se cargarán aquí -->
-                </div>
-                
-                <!-- INDICADOR DE CARGA -->
-                <div class="loading-indicator" id="loading-indicator">
-                    <i class="fas fa-spinner fa-spin"></i> Cargando grupos...
-                </div>
-            </section>
-        </div>
+<!-- CARRUSEL DE GRUPOS DESTACADOS -->
+<section class="featured-groups-section">
+<h2 class="featured-groups-title">Grupos Destacados</h2>
+<div class="featured-groups-carousel" id="featured-carousel">
+<!-- Los grupos destacados se cargarán aquí -->
+</div>
+</section>
 
-        <!-- PÁGINA 2: AÑADIR GRUPO -->
-        <div id="add-group-page" class="page">
-            <header class="page-header add-page">
-                <h1><i class="fas fa-plus-circle"></i> Añadir Nuevo Grupo</h1>
-                <p>Comparte tu grupo con la comunidad para que más personas puedan unirse</p>
-            </header>
-            
-            <div class="add-group-container">
-                <!-- FORMULARIO PARA AÑADIR GRUPO -->
-                <div class="form-container">
-                    <h2 class="form-title">Información del Grupo</h2>
-                    
-                    <form id="group-form">
-                        <!-- PLATAFORMA -->
-                        <div class="form-group">
-                            <label class="form-label">Plataforma <span style="color: #ff4757;">*</span></label>
-                            <div class="platform-options">
-                                <div class="platform-option whatsapp active" data-platform="whatsapp">
-                                    <i class="fab fa-whatsapp" style="font-size: 2.2rem; color: #25D366; margin-bottom: 8px;"></i>
-                                    <div style="font-weight: 600;">WhatsApp</div>
-                                </div>
-                                <div class="platform-option telegram" data-platform="telegram">
-                                    <i class="fab fa-telegram" style="font-size: 2.2rem; color: #0088cc; margin-bottom: 8px;"></i>
-                                    <div style="font-weight: 600;">Telegram</div>
-                                </div>
-                            </div>
-                            <input type="hidden" id="platform" name="platform" value="whatsapp" required>
-                        </div>
-                        
-                        <!-- NOMBRE DEL GRUPO -->
-                        <div class="form-group">
-                            <label for="group-name" class="form-label">Nombre del Grupo <span style="color: #ff4757;">*</span></label>
-                            <input type="text" id="group-name" class="form-input" name="group-name" 
-                                   placeholder="Ej: Amantes de los Perros" required>
-                            <span class="field-error" id="name-error"></span>
-                        </div>
-                        
-                        <!-- DESCRIPCIÓN -->
-                        <div class="form-group">
-                            <label for="description" class="form-label">Descripción <span style="color: #ff4757;">*</span></label>
-                            <textarea id="description" class="form-textarea" name="description" 
-                                      placeholder="Describe el propósito, temas de conversación y reglas del grupo (mínimo 50 caracteres)" 
-                                      required></textarea>
-                            <span class="field-error" id="description-error"></span>
-                        </div>
-                        
-                        <!-- CATEGORÍA -->
-                        <div class="form-group">
-                            <label for="category" class="form-label">Categoría <span style="color: #ff4757;">*</span></label>
-                            <select id="category" class="form-select" name="category" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value="mascotas">🐾 Mascotas</option>
-                                <option value="comunicacion">🗣️ Comunicación</option>
-                                <option value="deportes">⚽ Deportes</option>
-                                <option value="tecnologia">💻 Tecnología</option>
-                                <option value="ocio">🎮 Ocio</option>
-                                <option value="educacion">📚 Educación</option>
-                                <option value="negocios">💼 Negocios</option>
-                                <option value="musica">🎵 Música</option>
-                                <option value="viajes">✈️ Viajes</option>
-                                <option value="cocina">🍳 Cocina</option>
-                                <option value="salud">🏥 Salud</option>
-                                <option value="otros">🔗 Otros</option>
-                            </select>
-                            <span class="field-error" id="category-error"></span>
-                        </div>
-                        
-                        <!-- ENLACE DE INVITACIÓN -->
-                        <div class="form-group">
-                            <label for="invite-link" class="form-label">Enlace de Invitación <span style="color: #ff4757;">*</span></label>
-                            <input type="url" id="invite-link" class="form-input" name="invite-link" 
-                                   placeholder="https://chat.whatsapp.com/... o https://t.me/..." required>
-                            <span class="field-error" id="link-error"></span>
-                            <small style="color: #666; display: block; margin-top: 6px; font-size: 0.9rem;">
-                                Asegúrate de que el enlace sea público y no expire.
-                            </small>
-                        </div>
-                        
-                        <!-- IMAGEN (OPCIONAL) -->
-                        <div class="form-group">
-                            <label for="image-url" class="form-label">Imagen del Grupo (opcional)</label>
-                            <input type="url" id="image-url" class="form-input" name="image-url" 
-                                   placeholder="https://ejemplo.com/imagen-grupo.jpg">
-                            <span class="field-error" id="image-error"></span>
-                        </div>
-                        
-                        <!-- EMAIL DEL ADMIN (OPCIONAL) -->
-                        <div class="form-group">
-                            <label for="admin-email" class="form-label">Tu Email (opcional)</label>
-                            <input type="email" id="admin-email" class="form-input" name="admin-email" 
-                                   placeholder="tu@email.com">
-                            <span class="field-error" id="email-error"></span>
-                        </div>
-                        
-                        <!-- BOTONES -->
-                        <div class="form-actions">
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-paper-plane"></i>
-                                Enviar Grupo
-                            </button>
-                            <button type="reset" class="reset-btn" id="reset-form">
-                                <i class="fas fa-redo"></i>
-                                Limpiar
-                            </button>
-                        </div>
-                        
-                        <!-- MENSAJES -->
-                        <div id="success-message" style="display: none; padding: 15px; background: #d4edda; color: #155724; border-radius: 8px; margin-top: 20px; text-align: center;">
-                            <i class="fas fa-check-circle"></i>
-                            <strong>¡Grupo enviado con éxito!</strong> Será revisado y añadido pronto.
-                        </div>
-                        
-                        <div id="error-message" style="display: none; padding: 15px; background: #f8d7da; color: #721c24; border-radius: 8px; margin-top: 20px; text-align: center;">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <strong>Error:</strong> <span id="error-details">Completa todos los campos obligatorios.</span>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<!-- BARRA DE BÚSQUEDA -->
+<div class="search-bar-container">
+<div class="search-bar">
+<input type="text" id="search-input" class="search-input" placeholder="Buscar grupos por nombre, descripción o país...">
+<button id="search-btn" class="search-btn">
+<i class="fas fa-search"></i> Buscar
+</button>
+</div>
+</div>
+<!-- SELECTOR DE PLATAFORMA -->
+<div class="platform-selector">
+<button class="platform-btn whatsapp active" id="whatsapp-btn">
+<i class="fab fa-whatsapp platform-icon"></i>
+<span class="btn-text">WhatsApp</span>
+</button>
+<button class="platform-btn telegram" id="telegram-btn">
+<i class="fab fa-telegram platform-icon"></i>
+<span class="btn-text">Telegram</span>
+</button>
+</div>
+<!-- FILTROS POR PAÍS -->
+<div class="country-filters">
+<button class="country-btn active" data-country="all">
+<i class="fas fa-globe-americas country-flag"></i> Todos
+</button>
+<button class="country-btn" data-country="es">
+🇪🇸 España
+</button>
+<button class="country-btn" data-country="mx">
+🇲🇽 México
+</button>
+<button class="country-btn" data-country="ar">
+🇦🇷 Argentina
+</button>
+<button class="country-btn" data-country="co">
+🇨🇴 Colombia
+</button>
+<button class="country-btn" data-country="cl">
+🇨🇱 Chile
+</button>
+<button class="country-btn" data-country="pe">
+🇵🇪 Perú
+</button>
+<button class="country-btn" data-country="ve">
+🇻🇪 Venezuela
+</button>
+<button class="country-btn" data-country="uy">
+🇺🇾 Uruguay
+</button>
+<button class="country-btn" data-country="py">
+🇵🇾 Paraguay
+</button>
+<button class="country-btn" data-country="bo">
+🇧🇴 Bolivia
+</button>
+<button class="country-btn" data-country="ec">
+🇪🇨 Ecuador
+</button>
+<button class="country-btn" data-country="sv">
+🇸🇻 El Salvador
+</button>
+<button class="country-btn" data-country="gt">
+🇬🇹 Guatemala
+</button>
+<button class="country-btn" data-country="hn">
+🇭🇳 Honduras
+</button>
+<button class="country-btn" data-country="ni">
+🇳🇮 Nicaragua
+</button>
+<button class="country-btn" data-country="cr">
+🇨🇷 Costa Rica
+</button>
+<button class="country-btn" data-country="pa">
+🇵🇦 Panamá
+</button>
+<button class="country-btn" data-country="do">
+🇩🇴 República Dominicana
+</button>
+<button class="country-btn" data-country="cu">
+🇨🇺 Cuba
+</button>
+</div>
+<!-- CONTADOR DE GRUPOS -->
+<div class="groups-counter">
+<div class="counter-item whatsapp">
+<div class="counter-number" id="whatsapp-count">0</div>
+<div class="counter-label">Grupos de WhatsApp</div>
+</div>
+<div class="counter-item telegram">
+<div class="counter-number" id="telegram-count">0</div>
+<div class="counter-label">Grupos de Telegram</div>
+</div>
+</div>
+<!-- SECCIÓN DE CATEGORÍAS -->
+<section class="categories-section">
+<h2 class="categories-title">Explora por Categorías</h2>
+<div class="categories">
+<button class="category-btn active" data-category="all">
+<i class="fas fa-globe"></i> Todos
+</button>
+<button class="category-btn" data-category="mascotas">
+<i class="fas fa-paw"></i> Mascotas
+</button>
+<button class="category-btn" data-category="comunicacion">
+<i class="fas fa-comments"></i> Comunicación
+</button>
+<button class="category-btn" data-category="deportes">
+<i class="fas fa-futbol"></i> Deportes
+</button>
+<button class="category-btn" data-category="tecnologia">
+<i class="fas fa-laptop-code"></i> Tecnología
+</button>
+<button class="category-btn" data-category="ocio">
+<i class="fas fa-gamepad"></i> Ocio
+</button>
+<button class="category-btn" data-category="educacion">
+<i class="fas fa-graduation-cap"></i> Educación
+</button>
+<button class="category-btn" data-category="negocios">
+<i class="fas fa-briefcase"></i> Negocios
+</button>
+</div>
+<!-- GRUPOS NORMALES -->
+<div class="groups-container" id="groups-container">
+<!-- Los grupos se cargarán aquí -->
+</div>
+</section>
+</div>
+<!-- PÁGINA 2: AÑADIR GRUPO -->
+<div id="add-group-page" class="page">
+<header class="page-header add-page">
+<h1><i class="fas fa-plus-circle"></i> Añadir Nuevo Grupo</h1>
+<p>Comparte tu grupo con la comunidad para que más personas puedan unirse</p>
+</header>
+<div class="add-group-container">
+<!-- FORMULARIO PARA AÑADIR GRUPO -->
+<div class="form-container">
+<h2 class="form-title">Información del Grupo</h2>
+<form id="group-form">
+<!-- PLATAFORMA -->
+<div class="form-group">
+<label class="form-label">Plataforma <span style="color: #ff4757;">*</span></label>
+<div class="platform-options">
+<div class="platform-option whatsapp active" data-platform="whatsapp">
+<i class="fab fa-whatsapp" style="font-size: 2.2rem; color: #25D366; margin-bottom: 8px;"></i>
+<div style="font-weight: 600;">WhatsApp</div>
+</div>
+<div class="platform-option telegram" data-platform="telegram">
+<i class="fab fa-telegram" style="font-size: 2.2rem; color: #0088cc; margin-bottom: 8px;"></i>
+<div style="font-weight: 600;">Telegram</div>
+</div>
+</div>
+<input type="hidden" id="platform" name="platform" value="whatsapp" required>
+</div>
+<!-- NOMBRE DEL GRUPO -->
+<div class="form-group">
+<label for="group-name" class="form-label">Nombre del Grupo <span style="color: #ff4757;">*</span></label>
+<input type="text" id="group-name" class="form-input" name="group-name"
+placeholder="Ej: Amantes de los Perros" required>
+</div>
+<!-- DESCRIPCIÓN -->
+<div class="form-group">
+<label for="description" class="form-label">Descripción <span style="color: #ff4757;">*</span></label>
+<textarea id="description" class="form-textarea" name="description"
+placeholder="Describe el propósito, temas de conversación y reglas del grupo (mínimo 50 caracteres)"
+required></textarea>
+</div>
+<!-- CATEGORÍA -->
+<div class="form-group">
+<label for="category" class="form-label">Categoría <span style="color: #ff4757;">*</span></label>
+<select id="category" class="form-select" name="category" required>
+<option value="">Selecciona una categoría</option>
+<option value="mascotas">🐾 Mascotas</option>
+<option value="comunicacion">🗣️ Comunicación</option>
+<option value="deportes">⚽ Deportes</option>
+<option value="tecnologia">💻 Tecnología</option>
+<option value="ocio">🎮 Ocio</option>
+<option value="educacion">📚 Educación</option>
+<option value="negocios">💼 Negocios</option>
+<option value="otros">🔗 Otros</option>
+</select>
+</div>
+<!-- PAÍS -->
+<div class="form-group">
+<label for="country" class="form-label">País <span style="color: #ff4757;">*</span></label>
+<select id="country" class="form-select" name="country" required>
+<option value="">Selecciona un país</option>
+<option value="es">🇪🇸 España</option>
+<option value="mx">🇲🇽 México</option>
+<option value="ar">🇦🇷 Argentina</option>
+<option value="co">🇨🇴 Colombia</option>
+<option value="cl">🇨🇱 Chile</option>
+<option value="pe">🇵🇪 Perú</option>
+<option value="ve">🇻🇪 Venezuela</option>
+<option value="uy">🇺🇾 Uruguay</option>
+<option value="py">🇵🇾 Paraguay</option>
+<option value="bo">🇧🇴 Bolivia</option>
+<option value="ec">🇪🇨 Ecuador</option>
+<option value="sv">🇸🇻 El Salvador</option>
+<option value="gt">🇬🇹 Guatemala</option>
+<option value="hn">🇭🇳 Honduras</option>
+<option value="ni">🇳🇮 Nicaragua</option>
+<option value="cr">🇨🇷 Costa Rica</option>
+<option value="pa">🇵🇦 Panamá</option>
+<option value="do">🇩🇴 República Dominicana</option>
+<option value="cu">🇨🇺 Cuba</option>
+</select>
+</div>
+<!-- ENLACE DE INVITACIÓN -->
+<div class="form-group">
+<label for="invite-link" class="form-label">Enlace de Invitación <span style="color: #ff4757;">*</span></label>
+<input type="url" id="invite-link" class="form-input" name="invite-link"
+placeholder="https://chat.whatsapp.com/... o https://t.me/..." required>
+<small style="color: #666; display: block; margin-top: 6px; font-size: 0.9rem;">
+Asegúrate de que el enlace sea público y no expire.
+</small>
+</div>
+<!-- IMAGEN (OPCIONAL) -->
+<div class="form-group">
+<label for="image-url" class="form-label">Imagen del Grupo (opcional)</label>
+<input type="url" id="image-url" class="form-input" name="image-url"
+placeholder="https://ejemplo.com/imagen-grupo.jpg">
+</div>
+<!-- EMAIL DEL ADMIN (OPCIONAL) -->
+<div class="form-group">
+<label for="admin-email" class="form-label">Tu Email (opcional)</label>
+<input type="email" id="admin-email" class="form-input" name="admin-email"
+placeholder="tu@email.com">
+</div>
+<!-- BOTONES -->
+<div class="form-actions">
+<button type="submit" class="submit-btn">
+<i class="fab fa-whatsapp"></i>
+Enviar por WhatsApp
+</button>
+<button type="reset" class="reset-btn" id="reset-form">
+<i class="fas fa-redo"></i>
+Limpiar
+</button>
+</div>
+<!-- MENSAJE DE WHATSAPP -->
+<div id="whatsapp-message" class="whatsapp-message" style="display:none; background:#d4edda; color:#155724; padding:20px; border-radius:12px; margin-top:20px; text-align:center;">
+<i class="fab fa-whatsapp" style="font-size:2rem; margin-bottom:10px;"></i>
+<h3>¡Listo para enviar por WhatsApp!</h3>
+<p>Tu formulario ha sido preparado para ser enviado directamente a través de WhatsApp.</p>
+<a id="whatsapp-link" href="#" target="_blank" style="display:inline-block; background:#25D366; color:white; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:15px; transition:all 0.3s ease;">
+<i class="fab fa-whatsapp"></i> Abrir WhatsApp
+</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- FOOTER MEJORADO -->
+<footer>
+<p><strong>Directorio de Grupos Sociales</strong></p>
+<p>Conectando personas a través de intereses comunes</p>
+<div class="footer-nav">
+<button class="nav-link" onclick="switchPage('view-groups')">
+<i class="fas fa-search"></i> Ver Grupos
+</button>
+<button class="nav-link add-group" onclick="switchPage('add-group')">
+<i class="fas fa-plus-circle"></i> Añadir Grupo
+</button>
+</div>
+<p style="margin-top: 20px; font-size: 0.85rem; color: #888;">© 2023 - Todos los grupos son públicos y verificados</p>
+</footer>
+</div>
+<script>
+// DATOS DE EJEMPLO CON TODOS LOS PAÍSES
+const groupsData = {
+whatsapp: [
+{ id: 1, title: "Perros en Madrid", description: "Grupo para dueños de perros en Madrid.", category: "mascotas", members: 245, link: "#", imageUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "es" },
+{ id: 2, title: "Gatos Mexicanos", description: "Comunidad de amantes de gatos en toda la República Mexicana.", category: "mascotas", members: 312, link: "#", imageUrl: "https://images.unsplash.com/photo-1573866926487-a1865558a9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "mx" },
+{ id: 3, title: "Aves Exóticas AR", description: "Criadores y entusiastas de aves exóticas en Argentina.", category: "mascotas", members: 178, link: "#", imageUrl: "https://images.unsplash.com/photo-1533926338922-e1eb36c7e0d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ar" },
+{ id: 4, title: "Debate Político ES", description: "Espacio respetuoso para discutir actualidad política en España.", category: "comunicacion", members: 420, link: "#", imageUrl: "https://images.unsplash.com/photo-1589652717521-10c0d092dea9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "es" },
+{ id: 5, title: "Opinión Ciudadana MX", description: "Foro ciudadano mexicano para expresar opiniones sobre temas sociales.", category: "comunicacion", members: 287, link: "#", imageUrl: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "mx" },
+{ id: 6, title: "Diálogos Argentinos", description: "Conversaciones profundas sobre cultura y sociedad desde Argentina.", category: "comunicacion", members: 195, link: "#", imageUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ar" },
+{ id: 7, title: "Fútbol Local Madrid", description: "Organización de partidos amistosos en Madrid.", category: "deportes", members: 89, link: "#", imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "es" },
+{ id: 8, title: "Corredores CDMX", description: "Entrenamientos grupales en la Ciudad de México.", category: "deportes", members: 156, link: "#", imageUrl: "https://images.unsplash.com/photo-1594736797933-d0c6e4d6d6c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "mx" },
+{ id: 9, title: "Rugby Buenos Aires", description: "Club informal de rugby amateur en Buenos Aires.", category: "deportes", members: 124, link: "#", imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ar" },
+{ id: 10, title: "Dev Frontend ES", description: "Desarrolladores frontend en España compartiendo recursos.", category: "tecnologia", members: 342, link: "#", imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "es" },
+{ id: 11, title: "Startups Mexicanas", description: "Emprendedores tecnológicos en México conectando ideas.", category: "tecnologia", members: 278, link: "#", imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "mx" },
+{ id: 12, title: "IA Argentina", description: "Investigadores y entusiastas de la inteligencia artificial en Argentina.", category: "tecnologia", members: 203, link: "#", imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ar" }
+],
+telegram: [
+{ id: 13, title: "Perros Bogotá", description: "Dueños de perros en Bogotá organizando paseos.", category: "mascotas", members: 520, link: "#", imageUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "co" },
+{ id: 14, title: "Gatos Santiago", description: "Amantes de los gatos en Santiago de Chile.", category: "mascotas", members: 487, link: "#", imageUrl: "https://images.unsplash.com/photo-1573866926487-a1865558a9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "cl" },
+{ id: 15, title: "Animales Rescatados PE", description: "Red de rescate animal en Perú.", category: "mascotas", members: 632, link: "#", imageUrl: "https://images.unsplash.com/photo-1533926338922-e1eb36c7e0d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "pe" },
+{ id: 16, title: "Noticias Venezuela", description: "Canal oficial de noticias verificadas de Venezuela.", category: "comunicacion", members: 1100, link: "#", imageUrl: "https://images.unsplash.com/photo-1589652717521-10c0d092dea9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ve" },
+{ id: 17, title: "Debate Uruguay", description: "Foro de opinión ciudadana en Uruguay.", category: "comunicacion", members: 890, link: "#", imageUrl: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "uy" },
+{ id: 18, title: "Prensa Libre PY", description: "Periodistas y lectores paraguayos comprometidos con la información veraz.", category: "comunicacion", members: 765, link: "#", imageUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "py" },
+{ id: 19, title: "Fútbol Boliviano", description: "Seguimiento de ligas y selección boliviana.", category: "deportes", members: 1450, link: "#", imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "bo" },
+{ id: 20, title: "Running Ecuador", description: "Corredores ecuatorianos compartiendo rutas y eventos.", category: "deportes", members: 678, link: "#", imageUrl: "https://images.unsplash.com/photo-1594736797933-d0c6e4d6d6c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ec" },
+{ id: 21, title: "Surf El Salvador", description: "Comunidad de surfistas salvadoreños.", category: "deportes", members: 432, link: "#", imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "sv" },
+{ id: 22, title: "DevOps Guatemala", description: "Ingenieros DevOps en Guatemala compartiendo herramientas.", category: "tecnologia", members: 720, link: "#", imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "gt" },
+{ id: 23, title: "Cybersecurity HN", description: "Profesionales de ciberseguridad en Honduras.", category: "tecnologia", members: 589, link: "#", imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "hn" },
+{ id: 24, title: "Startups Nicaragua", description: "Ecosistema emprendedor tecnológico en Nicaragua.", category: "tecnologia", members: 512, link: "#", imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", country: "ni" }
+]
+};
+let currentMode = 'whatsapp';
+let currentCategory = 'all';
+let currentCountry = 'all';
+let searchTerm = '';
 
-        <!-- FOOTER MEJORADO -->
-        <footer>
-            <p><strong>Directorio de Grupos Sociales</strong></p>
-            <p>Conectando personas a través de intereses comunes</p>
-            
-            <div class="footer-nav">
-                <button class="nav-link" onclick="switchPage('view-groups')">
-                    <i class="fas fa-search"></i> Ver Grupos
-                </button>
-                <button class="nav-link add-group" onclick="switchPage('add-group')">
-                    <i class="fas fa-plus-circle"></i> Añadir Grupo
-                </button>
-            </div>
-            
-            <p style="margin-top: 20px; font-size: 0.85rem; color: #888;">© 2024 - Todos los grupos son públicos y verificados</p>
-        </footer>
-    </div>
+// Seleccionar 10 grupos destacados (los primeros 10)
+const featuredGroups = [...groupsData.whatsapp.slice(0, 5), ...groupsData.telegram.slice(0, 5)];
 
-    <script>
-        // DATOS DE EJEMPLO EXTENDIDOS (15 grupos)
-        const groupsData = {
-            whatsapp: [
-                { 
-                    id: 1, 
-                    title: "Amantes de los Perros", 
-                    description: "Comparte fotos, consejos y experiencias sobre el cuidado de perros. Veterinarios responden dudas los martes.", 
-                    category: "mascotas", 
-                    members: 245, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: true,
-                    highlights: ["Activo 24/7", "Expertos veterinarios", "Adopciones responsables"]
-                },
-                { 
-                    id: 2, 
-                    title: "Fútbol Local Madrid", 
-                    description: "Organizamos partidos los fines de semana y seguimos los torneos locales. ¡Todos los niveles son bienvenidos!", 
-                    category: "deportes", 
-                    members: 189, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 3, 
-                    title: "Programadores Beginners", 
-                    description: "Aprende programación desde cero con apoyo de la comunidad. Compartimos recursos y resolvemos dudas juntos.", 
-                    category: "tecnologia", 
-                    members: 456, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: true,
-                    highlights: ["Mentores expertos", "Proyectos colaborativos", "Clases semanales"]
-                },
-                { 
-                    id: 4, 
-                    title: "Recetas Caseras", 
-                    description: "Comparte tus mejores recetas de cocina casera. Desde platos sencillos hasta elaboraciones gourmet.", 
-                    category: "cocina", 
-                    members: 312, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 5, 
-                    title: "Viajeros Aventureros", 
-                    description: "Compartimos experiencias de viaje, recomendaciones y organizamos viajes grupales a destinos increíbles.", 
-                    category: "viajes", 
-                    members: 521, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: true,
-                    highlights: ["Viajes grupales", "Ofertas exclusivas", "Guías locales"]
-                },
-                { 
-                    id: 6, 
-                    title: "Música Indie Nacional", 
-                    description: "Descubre y comparte música independiente de artistas españoles. Conciertos, lanzamientos y más.", 
-                    category: "musica", 
-                    members: 187, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 7, 
-                    title: "Emprendedores Digitales", 
-                    description: "Networking para emprendedores del mundo digital. Compartimos oportunidades y aprendizajes.", 
-                    category: "negocios", 
-                    members: 389, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                }
-            ],
-            telegram: [
-                { 
-                    id: 8, 
-                    title: "Gatos del Mundo", 
-                    description: "Comparte fotos de tus gatos y conoce razas felinas de todo el mundo. Consejos de cuidado y salud felina.", 
-                    category: "mascotas", 
-                    members: 1250, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1573866926487-a1865558a9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: true,
-                    highlights: ["Comunidad global", "Concursos semanales", "Veterinario online"]
-                },
-                { 
-                    id: 9, 
-                    title: "Noticias Tecnológicas", 
-                    description: "Las últimas novedades en tecnología, gadgets, inteligencia artificial y ciencia. Actualizaciones diarias.", 
-                    category: "tecnologia", 
-                    members: 890, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 10, 
-                    title: "Running y Maratones", 
-                    description: "Compartimos planes de entrenamiento y organizamos carreras virtuales. Motívate con otros corredores.", 
-                    category: "deportes", 
-                    members: 645, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1594736797933-d0c6e4d6d6c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 11, 
-                    title: "Aprende Inglés", 
-                    description: "Practica inglés con nativos y otros estudiantes. Clases gratuitas, intercambios y recursos de aprendizaje.", 
-                    category: "educacion", 
-                    members: 1200, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: true,
-                    highlights: ["Nativos verificados", "Clases gratuitas", "Intercambios culturales"]
-                },
-                { 
-                    id: 12, 
-                    title: "Videojuegos Retro", 
-                    description: "Comunidad de amantes de los videojuegos retro. Compartimos ROMs, emuladores y organizamos torneos.", 
-                    category: "ocio", 
-                    members: 743, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 13, 
-                    title: "Fotografía Urbana", 
-                    description: "Comparte tus mejores fotos urbanas. Retos semanales, consejos de edición y salidas fotográficas.", 
-                    category: "comunicacion", 
-                    members: 832, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1492681290082-e932832941e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                },
-                { 
-                    id: 14, 
-                    title: "Salud y Bienestar", 
-                    description: "Consejos sobre salud mental, ejercicio, nutrición y hábitos saludables. Profesionales comparten sus conocimientos.", 
-                    category: "salud", 
-                    members: 956, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: true,
-                    highlights: ["Profesionales certificados", "Sesiones de meditación", "Planes nutricionales"]
-                },
-                { 
-                    id: 15, 
-                    title: "Criptomonedas España", 
-                    description: "Análisis de mercado, noticias sobre blockchain y criptomonedas. Aprende a invertir de forma segura.", 
-                    category: "negocios", 
-                    members: 1100, 
-                    link: "#",
-                    imageUrl: "https://images.unsplash.com/photo-1620336655055-bd87c5d1d73f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80",
-                    featured: false
-                }
-            ]
-        };
+function switchPage(page) {
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+document.getElementById(`${page}-page`).classList.add('active');
+document.getElementById(`${page}-btn`).classList.add('active');
+if (page === 'view-groups') {
+displayGroups();
+updateCounters();
+}
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-        let currentMode = 'whatsapp';
-        let currentCategory = 'all';
-        let searchTerm = '';
+function updateCounters() {
+document.getElementById('whatsapp-count').textContent = groupsData.whatsapp.length;
+document.getElementById('telegram-count').textContent = groupsData.telegram.length;
+}
 
-        // SISTEMA DE ALMACENAMIENTO
-        const storageManager = {
-            key: 'directorioGruposData',
-            
-            saveGroups: function() {
-                try {
-                    localStorage.setItem(this.key, JSON.stringify(groupsData));
-                    return true;
-                } catch (e) {
-                    console.warn('No se pudo guardar en localStorage:', e);
-                    return false;
-                }
-            },
-            
-            loadGroups: function() {
-                try {
-                    const saved = localStorage.getItem(this.key);
-                    if (saved) {
-                        const parsed = JSON.parse(saved);
-                        // Fusionar datos guardados con los predeterminados
-                        Object.keys(parsed).forEach(platform => {
-                            if (groupsData[platform]) {
-                                // Mantener IDs únicos
-                                parsed[platform].forEach(newGroup => {
-                                    if (!groupsData[platform].some(g => g.id === newGroup.id)) {
-                                        groupsData[platform].push(newGroup);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                } catch (e) {
-                    console.warn('No se pudo cargar de localStorage:', e);
-                }
-            }
-        };
+function switchMode(mode) {
+currentMode = mode;
+document.getElementById('whatsapp-btn').classList.remove('active');
+document.getElementById('telegram-btn').classList.remove('active');
+document.getElementById(`${mode}-btn`).classList.add('active');
+displayGroups();
+}
 
-        // VALIDADOR DE FORMULARIO
-        const formValidator = {
-            validateField: function(field, value) {
-                const errors = [];
-                
-                switch(field) {
-                    case 'group-name':
-                        if (!value.trim()) errors.push('El nombre es obligatorio');
-                        else if (value.length < 3) errors.push('Mínimo 3 caracteres');
-                        else if (value.length > 100) errors.push('Máximo 100 caracteres');
-                        break;
-                    case 'description':
-                        if (!value.trim()) errors.push('La descripción es obligatoria');
-                        else if (value.length < 50) errors.push('Mínimo 50 caracteres');
-                        else if (value.length > 500) errors.push('Máximo 500 caracteres');
-                        break;
-                    case 'category':
-                        if (!value) errors.push('Selecciona una categoría');
-                        break;
-                    case 'invite-link':
-                        if (!value.trim()) errors.push('El enlace es obligatorio');
-                        else if (!this.isValidURL(value)) errors.push('URL inválida');
-                        else if (!this.isValidInviteLink(value)) errors.push('Enlace no válido para WhatsApp o Telegram');
-                        break;
-                    case 'admin-email':
-                        if (value && !this.isValidEmail(value)) errors.push('Email inválido');
-                        break;
-                    case 'image-url':
-                        if (value && !this.isValidURL(value)) errors.push('URL de imagen inválida');
-                        break;
-                }
-                
-                return errors;
-            },
-            
-            isValidURL: function(string) {
-                try {
-                    new URL(string);
-                    return true;
-                } catch (_) {
-                    return false;
-                }
-            },
-            
-            isValidEmail: function(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            },
-            
-            isValidInviteLink: function(link) {
-                return link.includes('chat.whatsapp.com') || link.includes('t.me/');
-            }
-        };
+function switchCategory(category) {
+currentCategory = category;
+document.querySelectorAll('.category-btn').forEach(btn => {
+btn.classList.remove('active');
+if (btn.dataset.category === category) {
+btn.classList.add('active');
+}
+});
+displayGroups();
+}
 
-        // FUNCIONES DE NAVEGACIÓN
-        function switchPage(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(`${page}-page`).classList.add('active');
-            document.getElementById(`${page}-btn`).classList.add('active');
-            
-            if (page === 'view-groups') {
-                loadFeaturedGroups();
-                displayGroups();
-                updateCounters();
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+function switchCountry(country) {
+currentCountry = country;
+document.querySelectorAll('.country-btn').forEach(btn => {
+btn.classList.remove('active');
+if (btn.dataset.country === country) {
+btn.classList.add('active');
+}
+});
+displayGroups();
+}
 
-        // FUNCIONES PARA VER GRUPOS
-        function updateCounters() {
-            document.getElementById('whatsapp-count').textContent = groupsData.whatsapp.length;
-            document.getElementById('telegram-count').textContent = groupsData.telegram.length;
-        }
+function performSearch() {
+searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+displayGroups();
+}
 
-        function switchMode(mode) {
-            currentMode = mode;
-            document.getElementById('whatsapp-btn').classList.remove('active');
-            document.getElementById('telegram-btn').classList.remove('active');
-            document.getElementById(`${mode}-btn`).classList.add('active');
-            
-            displayGroups();
-        }
+function getCountryName(code) {
+const countries = {
+'es': 'España', 'mx': 'México', 'ar': 'Argentina', 'co': 'Colombia', 'cl': 'Chile',
+'pe': 'Perú', 've': 'Venezuela', 'uy': 'Uruguay', 'py': 'Paraguay', 'bo': 'Bolivia',
+'ec': 'Ecuador', 'sv': 'El Salvador', 'gt': 'Guatemala', 'hn': 'Honduras', 'ni': 'Nicaragua',
+'cr': 'Costa Rica', 'pa': 'Panamá', 'do': 'República Dominicana', 'cu': 'Cuba'
+};
+return countries[code] || code.toUpperCase();
+}
 
-        function switchCategory(category) {
-            currentCategory = category;
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.category === category) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            displayGroups();
-        }
+// ✅ FUNCIÓN CORREGIDA: navega al grupo asegurando que esté visible
+function scrollToGroup(groupId) {
+// 1. Cambiar a la página de ver grupos
+switchPage('view-groups');
 
-        function performSearch() {
-            searchTerm = document.getElementById('group-search').value.toLowerCase().trim();
-            displayGroups();
-        }
+// 2. Restablecer todos los filtros a "todos"
+currentMode = 'all'; // Mostrar ambos
+currentCategory = 'all';
+currentCountry = 'all';
+searchTerm = '';
 
-        function filterGroups() {
-            let filteredGroups = groupsData[currentMode];
-            
-            // Filtrar por categoría
-            if (currentCategory !== 'all') {
-                filteredGroups = filteredGroups.filter(g => g.category === currentCategory);
-            }
-            
-            // Filtrar por búsqueda
-            if (searchTerm) {
-                filteredGroups = filteredGroups.filter(g => 
-                    g.title.toLowerCase().includes(searchTerm) ||
-                    g.description.toLowerCase().includes(searchTerm) ||
-                    g.category.toLowerCase().includes(searchTerm) ||
-                    (g.highlights && g.highlights.some(h => h.toLowerCase().includes(searchTerm)))
-                );
-            }
-            
-            return filteredGroups;
-        }
+// Actualizar UI de botones
+document.querySelectorAll('.platform-btn').forEach(btn => btn.classList.remove('active'));
+document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+document.querySelectorAll('.country-btn').forEach(btn => btn.classList.remove('active'));
+document.getElementById('search-input').value = '';
 
-        function loadFeaturedGroups() {
-            const container = document.getElementById('featured-grid');
-            const allFeatured = [
-                ...groupsData.whatsapp.filter(g => g.featured),
-                ...groupsData.telegram.filter(g => g.featured)
-            ];
-            
-            if (allFeatured.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-star" style="font-size: 3rem; color: #ffd700; margin-bottom: 15px;"></i>
-                        <h3 style="color: #666; margin-bottom: 10px;">Próximamente grupos destacados</h3>
-                        <p style="color: #888;">Estamos seleccionando los mejores grupos</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = allFeatured.slice(0, 4).map(group => {
-                const platform = groupsData.whatsapp.some(g => g.id === group.id) ? 'whatsapp' : 'telegram';
-                const platformName = platform === 'whatsapp' ? 'WhatsApp' : 'Telegram';
-                
-                let highlightsHTML = '';
-                if (group.highlights && group.highlights.length > 0) {
-                    highlightsHTML = `
-                        <div class="featured-highlights">
-                            ${group.highlights.map(h => `<span class="highlight">${h}</span>`).join('')}
-                        </div>
-                    `;
-                }
-                
-                return `
-                    <div class="featured-card ${platform}">
-                        <div class="featured-header">
-                            <span class="featured-tag">
-                                <i class="fas fa-fire"></i> Destacado
-                            </span>
-                            <div class="featured-profile">
-                                <div class="featured-avatar">
-                                    <img src="${group.imageUrl}" alt="${group.title}" width="70" height="70" loading="lazy">
-                                </div>
-                                <div class="featured-info">
-                                    <h3>${group.title}</h3>
-                                    <span class="featured-platform">${platformName}</span>
-                                    <div class="featured-stats">
-                                        <div class="stat-item">
-                                            <i class="fas fa-users"></i>
-                                            <span>${group.members} miembros</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <i class="fas fa-tag"></i>
-                                            <span>${group.category}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="featured-content">
-                            <p class="featured-description">${group.description}</p>
-                            ${highlightsHTML}
-                            <a href="${group.link}" class="featured-link" target="_blank" rel="noopener">
-                                <i class="fas fa-rocket"></i> Unirse al grupo
-                            </a>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+// Activar botones "Todos"
+document.querySelector('.category-btn[data-category="all"]').classList.add('active');
+document.querySelector('.country-btn[data-country="all"]').classList.add('active');
 
-        function displayGroups() {
-            const container = document.getElementById('groups-container');
-            const loadingIndicator = document.getElementById('loading-indicator');
-            
-            // Mostrar indicador de carga
-            loadingIndicator.classList.add('active');
-            container.innerHTML = '';
-            
-            setTimeout(() => {
-                const filteredGroups = filterGroups().filter(g => !g.featured);
-                
-                if (filteredGroups.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-users" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
-                            <h3 style="color: #666; margin-bottom: 10px;">No se encontraron grupos</h3>
-                            <p style="color: #888; margin-bottom: 20px;">
-                                ${searchTerm ? `No hay resultados para "${searchTerm}"` : 'Prueba con otra categoría'}
-                            </p>
-                            <button onclick="switchCategory('all'); document.getElementById('group-search').value=''; performSearch();" 
-                                    style="padding: 10px 20px; background: #25D366; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                Ver todos los grupos
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = filteredGroups.map(group => {
-                        const platform = currentMode === 'whatsapp' ? 'WhatsApp' : 'Telegram';
-                        const iconClass = currentMode === 'whatsapp' ? 'fab fa-whatsapp' : 'fab fa-telegram';
-                        
-                        return `
-                            <div class="group-card ${currentMode}">
-                                <div style="padding: 20px; background: linear-gradient(135deg, ${currentMode === 'whatsapp' ? 'rgba(37, 211, 102, 0.1)' : 'rgba(0, 136, 204, 0.1)'} 0%, ${currentMode === 'whatsapp' ? 'rgba(18, 140, 126, 0.1)' : 'rgba(0, 92, 138, 0.1)'} 100%);">
-                                    <div style="display: flex; align-items: center; gap: 15px;">
-                                        <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                            <img src="${group.imageUrl}" alt="${group.title}" width="60" height="60" loading="lazy" style="object-fit: cover;">
-                                        </div>
-                                        <div>
-                                            <h3 style="font-size: 1.2rem; margin-bottom: 5px;">${group.title}</h3>
-                                            <span style="display: inline-block; padding: 4px 12px; background: ${currentMode === 'whatsapp' ? '#25D366' : '#0088cc'}; color: white; border-radius: 18px; font-size: 0.85rem; font-weight: 700;">
-                                                ${platform}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column;">
-                                    <p style="color: #666; margin-bottom: 15px; flex-grow: 1;">${group.description}</p>
-                                    <div style="display: flex; justify-content: space-between; color: #888; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem;">
-                                        <span><i class="fas fa-users"></i> ${group.members} miembros</span>
-                                        <span><i class="fas fa-tag"></i> ${group.category}</span>
-                                    </div>
-                                    <a href="${group.link}" style="padding: 12px; background: ${currentMode === 'whatsapp' ? 'linear-gradient(135deg, #25D366, #128C7E)' : 'linear-gradient(135deg, #0088cc, #005c8a)'}; color: white; text-align: center; border-radius: 10px; font-weight: 700; text-decoration: none;" target="_blank" rel="noopener">
-                                        <i class="fas fa-sign-in-alt"></i> Unirse al grupo
-                                    </a>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-                
-                loadingIndicator.classList.remove('active');
-            }, 500);
-        }
+// No hay botón "all" para plataforma, así que mostramos ambos → lo manejamos en displayGroups
 
-        // FUNCIONES PARA AÑADIR GRUPO
-        function initAddGroupPage() {
-            // Selector de plataforma
-            document.querySelectorAll('.platform-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    document.getElementById('platform').value = this.dataset.platform;
-                });
-            });
-            
-            // Validación en tiempo real
-            document.querySelectorAll('#group-form input, #group-form textarea, #group-form select').forEach(field => {
-                field.addEventListener('blur', function() {
-                    validateFieldInRealTime(this);
-                });
-                
-                field.addEventListener('input', function() {
-                    clearFieldError(this);
-                });
-            });
-            
-            // Envío del formulario
-            document.getElementById('group-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (!validateForm()) {
-                    return;
-                }
-                
-                const formData = new FormData(this);
-                const newGroup = {
-                    id: Date.now(),
-                    title: formData.get('group-name'),
-                    description: formData.get('description'),
-                    category: formData.get('category'),
-                    members: Math.floor(Math.random() * 200) + 50,
-                    link: formData.get('invite-link'),
-                    imageUrl: formData.get('image-url') || getDefaultImage(formData.get('category')),
-                    featured: false,
-                    platform: formData.get('platform')
-                };
-                
-                // Simular envío
-                const submitBtn = this.querySelector('.submit-btn');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-                submitBtn.disabled = true;
-                
-                setTimeout(() => {
-                    // Añadir a los datos
-                    groupsData[newGroup.platform].push(newGroup);
-                    
-                    // Guardar en localStorage
-                    storageManager.saveGroups();
-                    
-                    showSuccess('¡Grupo enviado con éxito! Será revisado y añadido pronto.');
-                    
-                    // Resetear formulario
-                    this.reset();
-                    document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('active'));
-                    document.querySelector('.platform-option.whatsapp').classList.add('active');
-                    document.getElementById('platform').value = 'whatsapp';
-                    
-                    // Restaurar botón
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    
-                    console.log('Grupo añadido:', newGroup);
-                }, 1500);
-            });
-            
-            // Resetear formulario
-            document.getElementById('reset-form').addEventListener('click', function() {
-                if (confirm('¿Estás seguro de que quieres limpiar el formulario?')) {
-                    document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('active'));
-                    document.querySelector('.platform-option.whatsapp').classList.add('active');
-                    document.getElementById('platform').value = 'whatsapp';
-                    document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
-                }
-            });
-        }
+// 3. Renderizar todos los grupos
+displayAllGroups();
 
-        function getDefaultImage(category) {
-            const defaultImages = {
-                'mascotas': 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'deportes': 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'tecnologia': 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'musica': 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'educacion': 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'negocios': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'viajes': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'cocina': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'salud': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'ocio': 'https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
-                'comunicacion': 'https://images.unsplash.com/photo-1492681290082-e932832941e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80'
-            };
-            
-            return defaultImages[category] || 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80';
-        }
+// 4. Esperar un frame para que el DOM se actualice, luego hacer scroll
+setTimeout(() => {
+const groupElement = document.querySelector(`[data-group-id="${groupId}"]`);
+if (groupElement) {
+// Agregar efecto visual
+groupElement.style.boxShadow = '0 0 0 3px #25D366, 0 15px 30px rgba(0, 0, 0, 0.12)';
+// Scroll suave
+groupElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+// Quitar borde resaltado después de 2 segundos
+setTimeout(() => {
+groupElement.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+}, 2000);
+} else {
+console.warn(`Grupo con ID ${groupId} no encontrado en el DOM.`);
+}
+}, 50);
+}
 
-        function validateFieldInRealTime(field) {
-            const errors = formValidator.validateField(field.id, field.value);
-            const errorElement = document.getElementById(`${field.id}-error`);
-            
-            if (errors.length > 0) {
-                if (errorElement) {
-                    errorElement.textContent = errors[0];
-                }
-                field.style.borderColor = '#ff4757';
-                return false;
-            } else {
-                if (errorElement) {
-                    errorElement.textContent = '';
-                }
-                field.style.borderColor = '#25D366';
-                return true;
-            }
-        }
+// Función auxiliar para mostrar todos los grupos sin filtros
+function displayAllGroups() {
+const container = document.getElementById('groups-container');
+const allGroups = [...groupsData.whatsapp, ...groupsData.telegram];
+container.innerHTML = allGroups.map(group => {
+const platform = group.id <= 12 ? 'WhatsApp' : 'Telegram';
+const platformClass = group.id <= 12 ? 'whatsapp' : 'telegram';
+const countryEmoji = {
+'es':'🇪🇸','mx':'🇲🇽','ar':'🇦🇷','co':'🇨🇴','cl':'🇨🇱','pe':'🇵🇪','ve':'🇻🇪','uy':'🇺🇾',
+'py':'🇵🇾','bo':'🇧🇴','ec':'🇪🇨','sv':'🇸🇻','gt':'🇬🇹','hn':'🇭🇳','ni':'🇳🇮','cr':'🇨🇷',
+'pa':'🇵🇦','do':'🇩🇴','cu':'🇨🇺'
+}[group.country] || '🌍';
+return `
+<div class="group-card ${platformClass}" data-group-id="${group.id}">
+<div style="padding:20px;background:linear-gradient(135deg,${platformClass==='whatsapp'?'rgba(37,211,102,0.1)':'rgba(0,136,204,0.1)'} 0%,${platformClass==='whatsapp'?'rgba(18,140,126,0.1)':'rgba(0,92,138,0.1)'} 100%);">
+<div style="display:flex;align-items:center;gap:15px;">
+<div style="width:60px;height:60px;border-radius:50%;overflow:hidden;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+<img src="${group.imageUrl}" alt="${group.title}" loading="lazy">
+</div>
+<div>
+<h3 style="font-size:1.2rem;margin-bottom:5px;">${group.title}</h3>
+<span style="display:inline-block;padding:4px 12px;background:${platformClass==='whatsapp'?'#25D366':'#0088cc'};color:white;border-radius:18px;font-size:0.85rem;font-weight:700;">${platform}</span>
+<div class="group-country">${countryEmoji} ${getCountryName(group.country)}</div>
+</div>
+</div>
+</div>
+<div style="padding:20px;flex-grow:1;display:flex;flex-direction:column;">
+<p style="color:#666;margin-bottom:15px;flex-grow:1;">${group.description}</p>
+<div style="display:flex;justify-content:space-between;color:#888;margin-bottom:15px;padding-bottom:12px;border-bottom:1px solid #eee;font-size:0.9rem;">
+<span><i class="fas fa-users"></i> ${group.members} miembros</span>
+<span><i class="fas fa-tag"></i> ${group.category}</span>
+</div>
+<a href="${group.link}" style="padding:12px;background:${platformClass==='whatsapp'?'linear-gradient(135deg,#25D366,#128C7E)':'linear-gradient(135deg,#0088cc,#005c8a)'};color:white;text-align:center;border-radius:10px;font-weight:700;text-decoration:none;">
+<i class="fas fa-sign-in-alt"></i> Unirse al grupo
+</a>
+</div>
+</div>
+`;
+}).join('');
+}
 
-        function clearFieldError(field) {
-            const errorElement = document.getElementById(`${field.id}-error`);
-            if (errorElement) {
-                errorElement.textContent = '';
-            }
-            field.style.borderColor = '#e0e0e0';
-        }
+function displayGroups() {
+// Esta función sigue usándose para búsquedas/filtros normales
+const container = document.getElementById('groups-container');
+let filteredGroups = [...groupsData.whatsapp, ...groupsData.telegram];
 
-        function validateForm() {
-            let isValid = true;
-            const fields = ['group-name', 'description', 'category', 'invite-link'];
-            
-            fields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (!validateFieldInRealTime(field)) {
-                    isValid = false;
-                }
-            });
-            
-            // Validar email si está presente
-            const emailField = document.getElementById('admin-email');
-            if (emailField.value.trim()) {
-                if (!validateFieldInRealTime(emailField)) {
-                    isValid = false;
-                }
-            }
-            
-            // Validar imagen si está presente
-            const imageField = document.getElementById('image-url');
-            if (imageField.value.trim()) {
-                if (!validateFieldInRealTime(imageField)) {
-                    isValid = false;
-                }
-            }
-            
-            return isValid;
-        }
+// Si currentMode es 'all', mostramos ambos. Pero en la UI solo hay whatsapp/telegram.
+// Para mantener compatibilidad, solo filtramos si NO es "all"
+if (currentMode !== 'all') {
+if (currentMode === 'whatsapp') filteredGroups = groupsData.whatsapp;
+else if (currentMode === 'telegram') filteredGroups = groupsData.telegram;
+}
 
-        function showSuccess(message) {
-            const msg = document.getElementById('success-message');
-            msg.innerHTML = `<i class="fas fa-check-circle"></i><strong> ${message}</strong>`;
-            msg.style.display = 'block';
-            document.getElementById('error-message').style.display = 'none';
-            
-            setTimeout(() => {
-                msg.style.display = 'none';
-            }, 5000);
-        }
+if (currentCategory !== 'all') filteredGroups = filteredGroups.filter(g => g.category === currentCategory);
+if (currentCountry !== 'all') filteredGroups = filteredGroups.filter(g => g.country === currentCountry);
+if (searchTerm) filteredGroups = filteredGroups.filter(g =>
+g.title.toLowerCase().includes(searchTerm) ||
+g.description.toLowerCase().includes(searchTerm) ||
+getCountryName(g.country).toLowerCase().includes(searchTerm)
+);
 
-        function showError(message) {
-            const msg = document.getElementById('error-message');
-            document.getElementById('error-details').textContent = ` ${message}`;
-            msg.style.display = 'block';
-            document.getElementById('success-message').style.display = 'none';
-            
-            setTimeout(() => {
-                msg.style.display = 'none';
-            }, 5000);
-        }
+if (filteredGroups.length === 0) {
+container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;background:white;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,0.08);">
+<i class="fas fa-users" style="font-size:3rem;color:#ddd;margin-bottom:15px;"></i>
+<h3 style="color:#666;margin-bottom:10px;">No hay grupos que coincidan</h3>
+<p style="color:#888;margin-bottom:20px;">Prueba con otros filtros</p>
+<button onclick="clearFilters()" style="padding:10px 20px;background:#25D366;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Limpiar filtros</button>
+</div>`;
+return;
+}
 
-        // FUNCIÓN DEBOUCE PARA BÚSQUEDA
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
+container.innerHTML = filteredGroups.map(group => {
+const platform = group.id <= 12 ? 'WhatsApp' : 'Telegram';
+const platformClass = group.id <= 12 ? 'whatsapp' : 'telegram';
+const countryEmoji = {
+'es':'🇪🇸','mx':'🇲🇽','ar':'🇦🇷','co':'🇨🇴','cl':'🇨🇱','pe':'🇵🇪','ve':'🇻🇪','uy':'🇺🇾',
+'py':'🇵🇾','bo':'🇧🇴','ec':'🇪🇨','sv':'🇸🇻','gt':'🇬🇹','hn':'🇭🇳','ni':'🇳🇮','cr':'🇨🇷',
+'pa':'🇵🇦','do':'🇩🇴','cu':'🇨🇺'
+}[group.country] || '🌍';
+return `
+<div class="group-card ${platformClass}" data-group-id="${group.id}">
+<div style="padding:20px;background:linear-gradient(135deg,${platformClass==='whatsapp'?'rgba(37,211,102,0.1)':'rgba(0,136,204,0.1)'} 0%,${platformClass==='whatsapp'?'rgba(18,140,126,0.1)':'rgba(0,92,138,0.1)'} 100%);">
+<div style="display:flex;align-items:center;gap:15px;">
+<div style="width:60px;height:60px;border-radius:50%;overflow:hidden;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+<img src="${group.imageUrl}" alt="${group.title}" loading="lazy">
+</div>
+<div>
+<h3 style="font-size:1.2rem;margin-bottom:5px;">${group.title}</h3>
+<span style="display:inline-block;padding:4px 12px;background:${platformClass==='whatsapp'?'#25D366':'#0088cc'};color:white;border-radius:18px;font-size:0.85rem;font-weight:700;">${platform}</span>
+<div class="group-country">${countryEmoji} ${getCountryName(group.country)}</div>
+</div>
+</div>
+</div>
+<div style="padding:20px;flex-grow:1;display:flex;flex-direction:column;">
+<p style="color:#666;margin-bottom:15px;flex-grow:1;">${group.description}</p>
+<div style="display:flex;justify-content:space-between;color:#888;margin-bottom:15px;padding-bottom:12px;border-bottom:1px solid #eee;font-size:0.9rem;">
+<span><i class="fas fa-users"></i> ${group.members} miembros</span>
+<span><i class="fas fa-tag"></i> ${group.category}</span>
+</div>
+<a href="${group.link}" style="padding:12px;background:${platformClass==='whatsapp'?'linear-gradient(135deg,#25D366,#128C7E)':'linear-gradient(135deg,#0088cc,#005c8a)'};color:white;text-align:center;border-radius:10px;font-weight:700;text-decoration:none;">
+<i class="fas fa-sign-in-alt"></i> Unirse al grupo
+</a>
+</div>
+</div>
+`;
+}).join('');
+}
 
-        // INICIALIZACIÓN
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar datos guardados
-            storageManager.loadGroups();
-            
-            // Configurar navegación
-            document.getElementById('view-groups-btn').addEventListener('click', () => switchPage('view-groups'));
-            document.getElementById('add-group-btn').addEventListener('click', () => switchPage('add-group'));
-            
-            // Configurar selector de plataforma
-            document.getElementById('whatsapp-btn').addEventListener('click', () => switchMode('whatsapp'));
-            document.getElementById('telegram-btn').addEventListener('click', () => switchMode('telegram'));
-            
-            // Configurar categorías
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    switchCategory(this.dataset.category);
-                });
-            });
-            
-            // Configurar búsqueda
-            const searchInput = document.getElementById('group-search');
-            const debouncedSearch = debounce(performSearch, 300);
-            searchInput.addEventListener('input', debouncedSearch);
-            
-            // Inicializar páginas
-            initAddGroupPage();
-            updateCounters();
-            loadFeaturedGroups();
-            displayGroups();
-            
-            // Prevenir envío accidental del formulario
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') {
-                    e.preventDefault();
-                }
-            });
-            
-            // Mejorar accesibilidad
-            document.querySelectorAll('button, a').forEach(element => {
-                element.setAttribute('tabindex', '0');
-            });
-            
-            // Agregar soporte para teclado
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    document.getElementById('group-search').value = '';
-                    performSearch();
-                }
-            });
-        });
-    </script>
+function clearFilters() {
+document.getElementById('search-input').value = '';
+searchTerm = '';
+currentCategory = 'all';
+currentCountry = 'all';
+document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+document.querySelector('.category-btn[data-category="all"]').classList.add('active');
+document.querySelectorAll('.country-btn').forEach(btn => btn.classList.remove('active'));
+document.querySelector('.country-btn[data-country="all"]').classList.add('active');
+displayGroups();
+}
+
+// ENVIAR POR WHATSAPP
+function initAddGroupPage() {
+document.querySelectorAll('.platform-option').forEach(option => {
+option.addEventListener('click', function() {
+document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('active'));
+this.classList.add('active');
+document.getElementById('platform').value = this.dataset.platform;
+});
+});
+document.getElementById('group-form').addEventListener('submit', function(e) {
+e.preventDefault();
+const formData = new FormData(this);
+const groupName = formData.get('group-name');
+const description = formData.get('description');
+const category = formData.get('category');
+const country = formData.get('country');
+const inviteLink = formData.get('invite-link');
+const platform = formData.get('platform');
+const imageUrl = formData.get('image-url') || '';
+const adminEmail = formData.get('admin-email') || '';
+if (!groupName || !description || !category || !country || !inviteLink || !platform) {
+alert('Completa todos los campos obligatorios.');
+return;
+}
+if (description.length < 50) {
+alert('La descripción debe tener al menos 50 caracteres.');
+return;
+}
+const countryNames = {
+'es': 'España', 'mx': 'México', 'ar': 'Argentina', 'co': 'Colombia', 'cl': 'Chile',
+'pe': 'Perú', 've': 'Venezuela', 'uy': 'Uruguay', 'py': 'Paraguay', 'bo': 'Bolivia',
+'ec': 'Ecuador', 'sv': 'El Salvador', 'gt': 'Guatemala', 'hn': 'Honduras', 'ni': 'Nicaragua',
+'cr': 'Costa Rica', 'pa': 'Panamá', 'do': 'República Dominicana', 'cu': 'Cuba'
+};
+const categoryName = {
+'mascotas': 'Mascotas', 'comunicacion': 'Comunicación', 'deportes': 'Deportes',
+'tecnologia': 'Tecnología', 'ocio': 'Ocio', 'educacion': 'Educación', 'negocios': 'Negocios', 'otros': 'Otros'
+};
+const message = `¡Hola! Quiero añadir mi grupo al directorio:
+` +
+`*Nombre:* ${groupName}
+` +
+`*Plataforma:* ${platform === 'whatsapp' ? 'WhatsApp' : 'Telegram'}
+` +
+`*Categoría:* ${categoryName[category] || category}
+` +
+`*País:* ${countryNames[country] || country}
+` +
+`*Descripción:* ${description}
+` +
+`*Enlace:* ${inviteLink}
+` +
+`${imageUrl ? `*Imagen:* ${imageUrl}
+` : ''}` +
+`${adminEmail ? `*Email del admin:* ${adminEmail}
+` : ''}`;
+// 🔴 ¡REEMPLAZA TUNUMERO por tu número real con código de país! Ej: 34612345678
+const yourNumber = 'TUNUMERO'; // ←←← AQUÍ VA TU NÚMERO
+const encodedMessage = encodeURIComponent(message);
+const whatsappUrl = yourNumber ? `https://wa.me/${yourNumber}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`;
+document.getElementById('whatsapp-link').href = whatsappUrl;
+document.getElementById('whatsapp-message').style.display = 'block';
+document.getElementById('whatsapp-message').scrollIntoView({ behavior: 'smooth' });
+});
+document.getElementById('reset-form').addEventListener('click', function() {
+document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('active'));
+document.querySelector('.platform-option.whatsapp').classList.add('active');
+document.getElementById('platform').value = 'whatsapp';
+document.getElementById('whatsapp-message').style.display = 'none';
+});
+}
+
+function displayFeaturedGroups() {
+const carousel = document.getElementById('featured-carousel');
+carousel.innerHTML = featuredGroups.map((group, index) => {
+const platform = group.id <= 12 ? 'WhatsApp' : 'Telegram';
+const platformClass = group.id <= 12 ? 'whatsapp' : 'telegram';
+return `
+<div class="featured-group-card">
+<div class="featured-group-logo">
+<img src="${group.imageUrl}" alt="${group.title}" loading="lazy">
+</div>
+<div class="featured-group-title">${group.title}</div>
+<button class="featured-group-view-btn" onclick="scrollToGroup(${group.id})">
+<i class="fas fa-eye"></i> Ver Grupo
+</button>
+</div>
+`;
+}).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+document.getElementById('view-groups-btn').addEventListener('click', () => switchPage('view-groups'));
+document.getElementById('add-group-btn').addEventListener('click', () => switchPage('add-group'));
+document.getElementById('whatsapp-btn').addEventListener('click', () => switchMode('whatsapp'));
+document.getElementById('telegram-btn').addEventListener('click', () => switchMode('telegram'));
+document.querySelectorAll('.category-btn').forEach(btn => btn.addEventListener('click', () => switchCategory(btn.dataset.category)));
+document.querySelectorAll('.country-btn').forEach(btn => btn.addEventListener('click', () => switchCountry(btn.dataset.country)));
+document.getElementById('search-btn').addEventListener('click', performSearch);
+document.getElementById('search-input').addEventListener('keyup', e => { if (e.key === 'Enter') performSearch(); });
+initAddGroupPage();
+updateCounters();
+displayGroups();
+displayFeaturedGroups();
+});
+</script>
 </body>
 </html>
+```
+
+### ✅ ¿Qué cambió?
+
+- **Nueva función `scrollToGroup(groupId)`**:  
+  - Cambia a la página "Ver Grupos".  
+  - **Resetea todos los filtros** (categoría, país, búsqueda).  
+  - **Renderiza TODOS los grupos** usando `displayAllGroups()`.  
+  - Luego hace **scroll suave** al grupo específico.  
+  - Añade un **efecto visual temporal** (borde verde) para destacarlo.
+
+- **Nueva función `displayAllGroups()`**:  
+  Muestra todos los grupos sin ningún filtro, asegurando que el grupo buscado esté presente.
+
+Ahora, **dar clic en "Ver Grupo" del carrusel siempre funcionará**, incluso si estás en otra página o con filtros activos.
