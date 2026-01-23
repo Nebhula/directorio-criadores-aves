@@ -1465,18 +1465,3 @@ displayFeaturedGroups();
 </script>
 </body>
 </html>
-```
-
-### ✅ ¿Qué cambió?
-
-- **Nueva función `scrollToGroup(groupId)`**:  
-  - Cambia a la página "Ver Grupos".  
-  - **Resetea todos los filtros** (categoría, país, búsqueda).  
-  - **Renderiza TODOS los grupos** usando `displayAllGroups()`.  
-  - Luego hace **scroll suave** al grupo específico.  
-  - Añade un **efecto visual temporal** (borde verde) para destacarlo.
-
-- **Nueva función `displayAllGroups()`**:  
-  Muestra todos los grupos sin ningún filtro, asegurando que el grupo buscado esté presente.
-
-Ahora, **dar clic en "Ver Grupo" del carrusel siempre funcionará**, incluso si estás en otra página o con filtros activos.
