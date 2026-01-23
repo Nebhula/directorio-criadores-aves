@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Directorio de Grupos - WhatsApp & Telegram</title>
+<title>INGROUPS - Directorio de Grupos</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 * {
@@ -45,14 +45,21 @@ gap: 12px;
 text-decoration: none;
 flex-shrink: 0;
 }
+.nav-brand img {
+height: 36px; /* Altura fija para mantener proporción */
+width: auto; /* Ancho automático para no deformar */
+object-fit: contain;
+}
 .nav-brand h1 {
-font-size: 1.6rem;
+font-size: 1.8rem;
 color: #333;
 background: linear-gradient(135deg, #25D366 0%, #0088cc 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
 white-space: nowrap;
+letter-spacing: -0.5px;
+font-weight: 800;
 }
 .nav-links {
 display: flex;
@@ -507,6 +514,7 @@ padding: 30px;
 border-radius: 18px;
 box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
 margin-bottom: 30px;
+position: relative;
 }
 .form-title {
 font-size: 1.8rem;
@@ -600,6 +608,35 @@ cursor: pointer;
 transition: all 0.3s ease;
 min-width: 120px;
 }
+
+/* INSTRUCCIONES DE ENVÍO */
+.instructions-section {
+background: #e8f5e9;
+border-left: 4px solid #25D366;
+padding: 20px;
+border-radius: 12px;
+margin-top: 25px;
+}
+.instructions-title {
+font-size: 1.3rem;
+color: #2e7d32;
+margin-bottom: 12px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.instructions-list {
+padding-left: 20px;
+}
+.instructions-list li {
+margin-bottom: 8px;
+color: #333;
+line-height: 1.5;
+}
+.instructions-list li strong {
+color: #1b5e20;
+}
+
 /* FOOTER RESPONSIVE */
 footer {
 text-align: center;
@@ -639,7 +676,10 @@ padding: 15px;
 gap: 12px;
 }
 .nav-brand h1 {
-font-size: 1.5rem;
+font-size: 1.6rem;
+}
+.nav-brand img {
+height: 32px;
 }
 .nav-links {
 width: 100%;
@@ -740,6 +780,12 @@ flex-direction: column;
 width: 100%;
 min-width: auto;
 }
+.instructions-section {
+padding: 15px;
+}
+.instructions-title {
+font-size: 1.1rem;
+}
 .footer-nav {
 flex-direction: column;
 align-items: center;
@@ -752,6 +798,9 @@ justify-content: center;
 @media (max-width: 480px) {
 .nav-brand h1 {
 font-size: 1.4rem;
+}
+.nav-brand img {
+height: 28px;
 }
 .nav-link {
 padding: 8px 15px;
@@ -792,9 +841,9 @@ grid-template-columns: repeat(2, 1fr);
 <div class="container">
 <!-- NAVEGACIÓN MEJORADA -->
 <nav class="main-nav">
-<a href="/" class="nav-brand">
-<i class="fas fa-users" style="font-size: 1.8rem; color: #25D366;"></i>
-<h1><b>INGROPUS</b></h1>
+<a href="#" class="nav-brand">
+<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgZD3EXJYHANHKOnFmY3SM12ts-pnBHZe6xUNOxjgg05QykyrKgYnEL6FR4gUCvA88zRJhs2cZbs5IbLa3t2Rdom_ADoGH0F1J6Srwd_ezbU89Ce3UhlV9TKBG-BbTmGVZiFYrYGjn64l14OZagtgeCX1HjlZNHhInkgyhYQbaZZYJwBcPpCcpSKRdVmCs/s1600/Yellow%20and%20Black%20Illustrated%20Dog%20Warning%20Logo%20%2810%29.png" alt="INGROUPS Logo">
+<h1>INGROUPS</h1>
 </a>
 <div class="nav-links">
 <button class="nav-link active" id="view-groups-btn">
@@ -810,7 +859,7 @@ Añadir Grupo
 <!-- PÁGINA 1: VER GRUPOS -->
 <div id="view-groups-page" class="page active">
 <header class="page-header">
-<h1><i class="fas fa-users"></i> Directorio de Grupos</h1>
+<h1><i class="fas fa-users"></i> INGROUPS</h1>
 <p>Descubre los mejores grupos de WhatsApp y Telegram según tus intereses</p>
 </header>
 
@@ -1072,13 +1121,26 @@ Limpiar
 <i class="fab fa-whatsapp"></i> Abrir WhatsApp
 </a>
 </div>
+
+<!-- ✅ INSTRUCCIONES DE ENVÍO -->
+<div class="instructions-section">
+<h3 class="instructions-title"><i class="fas fa-info-circle"></i> Instrucciones para enviar tu grupo</h3>
+<ul class="instructions-list">
+<li><strong>Completa todos los campos obligatorios</strong> (marcados con *) para que podamos revisar tu solicitud.</li>
+<li>Asegúrate de que el <strong>enlace de invitación sea público</strong> y no tenga fecha de expiración.</li>
+<li>Nuestro equipo de <strong>INGROUPS verificará tu grupo</strong> en las próximas 48 horas.</li>
+<li>Te contactaremos vía WhatsApp si necesitamos más información o para confirmar la publicación.</li>
+<li>Solo se aceptan grupos <strong>respetuosos, sin contenido inapropiado</strong> y con propósito claro.</li>
+</ul>
+</div>
+
 </form>
 </div>
 </div>
 </div>
 <!-- FOOTER MEJORADO -->
 <footer>
-<p><strong>Directorio de Grupos Sociales</strong></p>
+<p><strong>INGROUPS</strong> - Directorio de Grupos Sociales</p>
 <p>Conectando personas a través de intereses comunes</p>
 <div class="footer-nav">
 <button class="nav-link" onclick="switchPage('view-groups')">
@@ -1213,8 +1275,6 @@ document.getElementById('search-input').value = '';
 // Activar botones "Todos"
 document.querySelector('.category-btn[data-category="all"]').classList.add('active');
 document.querySelector('.country-btn[data-country="all"]').classList.add('active');
-
-// No hay botón "all" para plataforma, así que mostramos ambos → lo manejamos en displayGroups
 
 // 3. Renderizar todos los grupos
 displayAllGroups();
@@ -1413,8 +1473,8 @@ const message = `¡Hola! Quiero añadir mi grupo al directorio:
 ` : ''}` +
 `${adminEmail ? `*Email del admin:* ${adminEmail}
 ` : ''}`;
-// 🔴 ¡REEMPLAZA TUNUMERO por tu número real con código de país! Ej: 34612345678
-const yourNumber = 'TUNUMERO'; // ←←← AQUÍ VA TU NÚMERO
+// ✅ ¡TU NÚMERO DE WHATSAPP YA ESTÁ CONFIGURADO!
+const yourNumber = '34677163664'; // +34 677 16 36 64 → sin espacios ni símbolos
 const encodedMessage = encodeURIComponent(message);
 const whatsappUrl = yourNumber ? `https://wa.me/${yourNumber}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`;
 document.getElementById('whatsapp-link').href = whatsappUrl;
@@ -1465,3 +1525,4 @@ displayFeaturedGroups();
 </script>
 </body>
 </html>
+
