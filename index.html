@@ -6,6 +6,7 @@
 <title>Criadores de Aves España - Directorio de Huevos Fértiles y Aves por Raza</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* RESET Y CONFIGURACIÓN GENERAL */
 * {
     margin: 0;
     padding: 0;
@@ -42,22 +43,10 @@
 }
 
 body {
-    background: linear-gradient(135deg, #f9f7f2 0%, #e8f5e9 100%);
+    background: #f9f7f2;
     color: #333;
     line-height: 1.6;
     overflow-x: hidden;
-    position: relative;
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    background: linear-gradient(180deg, rgba(40, 167, 69, 0.08) 0%, transparent 100%);
-    z-index: -1;
 }
 
 .container {
@@ -73,17 +62,15 @@ body::before {
     justify-content: space-between;
     align-items: center;
     background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
-    padding: 16px 24px;
-    border-radius: var(--border-radius-xl);
-    margin: 20px auto;
-    box-shadow: var(--shadow-lg);
+    padding: 15px 20px;
+    border-radius: var(--border-radius-lg);
+    margin: 15px auto;
+    box-shadow: var(--shadow-md);
     position: sticky;
-    top: 15px;
+    top: 10px;
     z-index: 1000;
     flex-wrap: wrap;
     gap: 15px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.15);
 }
 
 .nav-brand {
@@ -91,67 +78,43 @@ body::before {
     align-items: center;
     gap: 12px;
     text-decoration: none;
-    min-width: 240px;
+    flex: 1;
+    min-width: 200px;
 }
 
 .nav-brand i {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: var(--egg-yellow);
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .nav-brand h1 {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     color: var(--white);
     font-weight: 700;
-    letter-spacing: -0.5px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .nav-links {
     display: flex;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px;
-    border-radius: var(--border-radius-lg);
+    gap: 8px;
     flex-wrap: wrap;
     justify-content: center;
-    min-width: 300px;
-    backdrop-filter: blur(5px);
 }
 
 .nav-link {
-    padding: 10px 20px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.15);
     border: none;
-    background: transparent;
     border-radius: var(--border-radius-md);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: var(--white);
     white-space: nowrap;
-    min-width: 110px;
-    justify-content: center;
-    position: relative;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 80%;
-    height: 3px;
-    background: var(--egg-yellow);
-    transition: var(--transition);
-    border-radius: 2px;
 }
 
 .nav-link:hover {
@@ -159,207 +122,72 @@ body::before {
     transform: translateY(-2px);
 }
 
-.nav-link:hover::after {
-    transform: translateX(-50%) scaleX(1);
-}
-
 .nav-link.active {
     background: rgba(255, 255, 255, 0.35);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.nav-link.active::after {
-    transform: translateX(-50%) scaleX(1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* HERO SECTION */
 .hero {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.95) 0%, rgba(30, 126, 52, 0.95) 100%), 
-                url('https://images.unsplash.com/photo-1597843270284-1b7be8a9f1f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.95) 0%, rgba(30, 126, 52, 0.95) 100%);
     color: var(--white);
     text-align: center;
-    padding: 60px 20px;
-    border-radius: var(--border-radius-xl);
-    margin-bottom: 40px;
-    box-shadow: var(--shadow-xl);
-    position: relative;
-    overflow: hidden;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    right: -50%;
-    bottom: -50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
+    padding: 40px 20px;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-lg);
 }
 
 .hero-content {
-    position: relative;
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
-    z-index: 2;
 }
 
 .hero h1 {
-    font-size: 2.8rem;
-    margin-bottom: 20px;
-    text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    font-size: 2rem;
+    margin-bottom: 15px;
     line-height: 1.2;
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-weight: 700;
 }
 
 .hero p {
-    font-size: 1.3rem;
-    margin-bottom: 30px;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
     opacity: 0.95;
-    line-height: 1.5;
-    font-weight: 300;
 }
 
 .search-container {
-    max-width: 700px;
+    max-width: 600px;
     margin: 0 auto;
     display: flex;
     gap: 10px;
     background: rgba(255, 255, 255, 0.15);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--border-radius-md);
     padding: 4px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.25);
 }
 
 .search-input {
     flex: 1;
-    padding: 14px 20px;
+    padding: 12px 15px;
     border: none;
-    border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+    border-radius: var(--border-radius-sm);
     font-size: 1rem;
     background: rgba(255, 255, 255, 0.1);
     color: white;
-    transition: var(--transition);
     min-width: 0;
-    font-weight: 500;
 }
 
 .search-input::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
 
-.search-input:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.2);
-}
-
 .search-btn {
-    padding: 14px 24px;
+    padding: 12px 20px;
     background: linear-gradient(135deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
     color: white;
     border: none;
-    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    border-radius: var(--border-radius-sm);
     font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-    min-width: 120px;
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-}
-
-.search-btn:hover {
-    background: linear-gradient(135deg, var(--dark-orange) 0%, #cc4500 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
-}
-
-.search-btn:active {
-    transform: translateY(0);
-}
-
-/* SECCIÓN DE FILTROS POR TIPO DE AVE */
-.bird-type-filters, .community-filters {
-    background: var(--white);
-    border-radius: var(--border-radius-lg);
-    padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: var(--shadow-md);
-    border-top: 4px solid transparent;
-    background-clip: padding-box;
-    position: relative;
-    overflow: hidden;
-}
-
-.bird-type-filters::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-green) 0%, var(--secondary-green) 100%);
-}
-
-.community-filters::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
-}
-
-.filters-title, .community-title {
-    text-align: center;
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-    color: var(--dark-green);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    position: relative;
-    padding-bottom: 10px;
-}
-
-.filters-title::after, .community-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: var(--primary-orange);
-    border-radius: 2px;
-}
-
-.filter-container, .community-filter-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 15px;
-    padding: 0 10px;
-}
-
-.filter-btn, .community-btn {
-    padding: 10px 20px;
-    background: var(--light-gray);
-    border: 2px solid #eaeaea;
-    border-radius: 50px;
-    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
@@ -367,147 +195,88 @@ body::before {
     align-items: center;
     gap: 8px;
     white-space: nowrap;
-    min-width: 110px;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
 }
 
-.filter-btn::before, .community-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
-    opacity: 0;
-    transition: var(--transition);
-    z-index: -1;
-}
-
-.filter-btn.active::before {
-    opacity: 1;
-}
-
-.filter-btn.active {
-    color: white;
-    border-color: var(--primary-green);
+.search-btn:hover {
+    background: linear-gradient(135deg, var(--dark-orange) 0%, #cc4500 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
-.filter-btn:hover:not(.active) {
-    background: var(--light-green);
-    border-color: var(--primary-green);
-    transform: translateY(-1px);
+/* FILTROS */
+.bird-type-filters, .community-filters {
+    background: var(--white);
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
 }
 
-.community-btn::before {
-    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
-}
-
-.community-btn.active::before {
-    opacity: 1;
-}
-
-.community-btn.active {
-    color: white;
-    border-color: var(--primary-orange);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-}
-
-.community-btn:hover:not(.active) {
-    background: #fff8e6;
-    border-color: var(--primary-orange);
-    transform: translateY(-1px);
-}
-
-.flag-icon {
-    font-size: 1.3rem;
-    margin-right: 4px;
-}
-
-/* PRODUCTOS BADGES */
-.product-badges {
+.filters-title, .community-title {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: var(--dark-green);
+    font-weight: 700;
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-top: 15px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.product-badge {
-    padding: 6px 16px;
-    border-radius: 30px;
-    font-weight: 700;
+.filter-container, .community-filter-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.filter-btn, .community-btn {
+    padding: 8px 16px;
+    background: var(--light-gray);
+    border: 2px solid #eaeaea;
+    border-radius: 50px;
     font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     white-space: nowrap;
-    transition: var(--transition);
 }
 
-.product-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.filter-btn.active {
+    background: var(--primary-green);
+    color: white;
+    border-color: var(--primary-green);
 }
 
-.product-badge.eggs {
-    background: linear-gradient(135deg, #fff9e6 0%, #ffeb3b 100%);
-    color: #5d4037;
-    border: 1px solid #ffd54f;
-}
-
-.product-badge.chicks {
-    background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%);
-    color: #5d4037;
-    border: 1px solid #ffb74d;
-}
-
-.product-badge.both {
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-    color: var(--dark-green);
-    border: 1px solid var(--primary-green);
+.community-btn.active {
+    background: var(--primary-orange);
+    color: white;
+    border-color: var(--primary-orange);
 }
 
 /* CRIADORES SECTION */
 .breeders-section {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 }
 
 .section-title {
     text-align: center;
-    font-size: 2.2rem;
-    margin-bottom: 35px;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
     color: var(--dark-green);
-    position: relative;
-    display: block;
-    padding-bottom: 15px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
-    border-radius: 2px;
+    font-weight: 700;
 }
 
 .breeders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 35px;
-    margin-top: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
 }
 
 .breeder-card {
@@ -518,56 +287,24 @@ body::before {
     transition: var(--transition);
     display: flex;
     flex-direction: column;
-    border: 2px solid rgba(0,0,0,0.05);
-    width: 100%;
-    min-width: 0;
-    position: relative;
-}
-
-.breeder-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
 }
 
 .breeder-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
-    border-color: rgba(139, 69, 19, 0.2);
 }
 
 .breeder-header {
     background: linear-gradient(135deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
     color: var(--white);
-    padding: 20px;
+    padding: 15px;
     text-align: center;
-    position: relative;
-}
-
-.breeder-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
 }
 
 .breeder-name {
-    font-size: 1.6rem;
-    margin-bottom: 10px;
-    font-weight: 800;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    letter-spacing: -0.5px;
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    font-weight: 700;
 }
 
 .breeder-location {
@@ -575,18 +312,13 @@ body::before {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     opacity: 0.95;
-    margin-top: 6px;
-    flex-wrap: wrap;
-    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 .products-available {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255,255,255,0.3);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -594,32 +326,25 @@ body::before {
     font-weight: 600;
 }
 
-.products-available i {
-    margin-right: 4px;
-    font-size: 1.1rem;
-}
-
 .breeder-description {
     padding: 20px;
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .description-text {
     color: #555;
     margin-bottom: 15px;
     line-height: 1.6;
-    font-size: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-weight: 400;
+    font-size: 0.95rem;
+    flex-grow: 1;
 }
 
 .breeder-contact {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid #eee;
@@ -628,170 +353,89 @@ body::before {
 .contact-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     color: var(--dark-gray);
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .contact-item i {
     color: var(--primary-green);
-    font-size: 1.1rem;
-    min-width: 20px;
+    width: 16px;
 }
 
-/* NUEVO SISTEMA DE RAZAS - MEJORADO */
+/* SISTEMA DE RAZAS */
 .breeds-section {
-    margin-top: 25px;
-    padding-top: 25px;
+    margin-top: 20px;
+    padding-top: 20px;
     border-top: 2px solid #f0e6d6;
-    background: linear-gradient(135deg, rgba(245, 240, 230, 0.6) 0%, rgba(240, 230, 214, 0.4) 100%);
-    border-radius: var(--border-radius-md);
 }
 
 .breeds-title {
     text-align: center;
     font-weight: 700;
     color: var(--secondary-brown);
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-    padding: 0 15px;
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    letter-spacing: -0.5px;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
 }
 
-.breeds-title::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 10%;
-    width: 80%;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--primary-orange), transparent);
-}
-
-/* TABS SYSTEM - MEJORADO */
 .breeds-tabs-container {
     width: 100%;
-    padding: 0 15px;
 }
 
 .breeds-tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
+    gap: 8px;
+    margin-bottom: 15px;
     overflow-x: auto;
-    padding: 5px 5px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-brown) transparent;
-    justify-content: center;
+    padding: 5px;
+    scrollbar-width: none;
 }
 
 .breeds-tabs::-webkit-scrollbar {
-    height: 8px;
-}
-
-.breeds-tabs::-webkit-scrollbar-track {
-    background: rgba(139, 69, 19, 0.05);
-    border-radius: 4px;
-}
-
-.breeds-tabs::-webkit-scrollbar-thumb {
-    background-color: var(--primary-brown);
-    border-radius: 4px;
-    border: 2px solid rgba(139, 69, 19, 0.05);
+    display: none;
 }
 
 .breed-tab {
-    padding: 12px 20px;
+    padding: 10px 15px;
     background: var(--white);
     border: 2px solid #e0d6c8;
     border-radius: 50px;
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    gap: 6px;
     white-space: nowrap;
-    min-width: 150px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    position: relative;
-    overflow: hidden;
-}
-
-.breed-tab::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
-    opacity: 0;
-    transition: var(--transition);
-    z-index: -1;
-}
-
-.breed-tab:hover {
-    background: #fff8f0;
-    border-color: var(--primary-brown);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.15);
+    flex-shrink: 0;
 }
 
 .breed-tab.active {
+    background: var(--primary-brown);
     color: white;
     border-color: var(--primary-brown);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.25);
 }
 
-.breed-tab.active::before {
-    opacity: 1;
-}
-
-.breed-tab-icon {
-    font-size: 1.2rem;
-}
-
-/* TAB CONTENT - MEJORADO */
 .breeds-tab-content {
     display: none;
-    animation: fadeIn 0.4s ease;
-    padding: 0 15px;
 }
 
 .breeds-tab-content.active {
     display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .breed-detail {
-    background: var(--white);
+    background: var(--light-brown);
     border-radius: var(--border-radius-md);
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 2px solid #e8e0d6;
+    padding: 15px;
     margin-top: 10px;
-    transition: var(--transition);
-}
-
-.breed-detail:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-}
-
-.breed-header {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 25px;
-    margin-bottom: 25px;
-    align-items: start;
 }
 
 .breed-title-container {
@@ -799,54 +443,48 @@ body::before {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
 .breed-title {
-    font-size: 1.8rem;
-    font-weight: 800;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: var(--secondary-brown);
     margin: 0;
-    letter-spacing: -0.5px;
 }
 
 .breed-product-tag {
-    padding: 8px 18px;
+    padding: 5px 12px;
     border-radius: 30px;
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    gap: 6px;
 }
 
 .breed-product-tag.eggs {
     background: linear-gradient(135deg, #fff9e6 0%, #ffeb3b 100%);
     color: #5d4037;
-    border: 1px solid #ffd54f;
 }
 
 .breed-product-tag.chicks {
     background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%);
     color: #5d4037;
-    border: 1px solid #ffb74d;
 }
 
 .breed-product-tag.both {
     background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
     color: var(--dark-green);
-    border: 1px solid var(--primary-green);
 }
 
 .breed-image-container {
     width: 100%;
-    height: 320px;
-    border-radius: var(--border-radius-md);
+    height: 200px;
+    border-radius: var(--border-radius-sm);
     overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    border: 4px solid white;
-    position: relative;
+    margin-bottom: 15px;
     background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
 }
 
@@ -855,104 +493,63 @@ body::before {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s ease, filter 0.3s ease;
-}
-
-.breed-image:hover {
-    transform: scale(1.05);
-    filter: brightness(1.1);
 }
 
 .breed-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
 .info-item {
-    padding: 16px;
-    background: var(--light-brown);
+    padding: 12px;
+    background: var(--white);
     border-radius: var(--border-radius-sm);
-    border-left: 5px solid var(--primary-brown);
-    transition: var(--transition);
-}
-
-.info-item:hover {
-    background: #f0e8dc;
-    transform: translateX(5px);
+    border-left: 4px solid var(--primary-brown);
 }
 
 .info-item h4 {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--secondary-brown);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-weight: 700;
+    gap: 6px;
 }
 
 .info-item p {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #555;
-    line-height: 1.6;
-    font-weight: 400;
+    line-height: 1.5;
 }
 
 .breed-actions {
     display: flex;
-    gap: 15px;
-    margin-top: 25px;
+    gap: 10px;
+    margin-top: 15px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
 .breed-btn {
     flex: 1;
-    min-width: 180px;
-    padding: 14px 25px;
+    min-width: 120px;
+    padding: 10px 15px;
     border: none;
     border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    position: relative;
-    overflow: hidden;
 }
 
-.breed-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.2);
-    opacity: 0;
-    transition: var(--transition);
-}
-
-.breed-btn:hover::before {
-    opacity: 1;
-}
-
-.breed-btn.view-btn {
-    background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
-    color: white;
-}
-
-.breed-btn.view-btn:hover {
-    background: linear-gradient(135deg, var(--dark-green) 0%, #0a3d19 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(40, 167, 69, 0.4);
+.breed-btn:hover {
+    transform: translateY(-2px);
 }
 
 .breed-btn.buy-btn {
@@ -960,21 +557,37 @@ body::before {
     color: white;
 }
 
-.breed-btn.buy-btn:hover {
-    background: linear-gradient(135deg, var(--dark-orange) 0%, #b33c00 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(255, 152, 0, 0.4);
-}
-
 .breed-btn.info-btn {
     background: linear-gradient(135deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
     color: white;
 }
 
-.breed-btn.info-btn:hover {
-    background: linear-gradient(135deg, var(--secondary-brown) 0%, #6b2c0c 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(139, 69, 19, 0.4);
+/* PRODUCT BADGES */
+.product-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.product-badge {
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.product-badge.eggs {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffeb3b 100%);
+    color: #5d4037;
+}
+
+.product-badge.chicks {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%);
+    color: #5d4037;
 }
 
 /* MODAL DE CONTACTO */
@@ -990,110 +603,74 @@ body::before {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    backdrop-filter: blur(5px);
 }
 
 .modal-content {
     background: var(--white);
-    border-radius: var(--border-radius-xl);
+    border-radius: var(--border-radius-lg);
     width: 100%;
-    max-width: 650px;
+    max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     position: relative;
-    animation: modalOpen 0.4s ease-out;
-    margin: 0 auto;
-    border: 2px solid rgba(139, 69, 19, 0.2);
+    animation: modalOpen 0.3s ease-out;
 }
 
 @keyframes modalOpen {
-    from { 
-        opacity: 0; 
-        transform: translateY(-50px) scale(0.95); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0) scale(1); 
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .modal-header {
     background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
     color: white;
-    padding: 25px;
+    padding: 20px;
     text-align: center;
-    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
-    position: relative;
-}
-
-.modal-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
 .modal-title {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     margin-bottom: 10px;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .modal-breed-info {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    margin-top: 12px;
-    font-size: 1.05rem;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 0.95rem;
     flex-wrap: wrap;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 10px 20px;
-    border-radius: 50px;
-    display: inline-flex;
 }
 
 .modal-body {
-    padding: 30px;
+    padding: 20px;
 }
 
 .contact-form .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .contact-form label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 700;
+    margin-bottom: 6px;
+    font-weight: 600;
     color: var(--dark-gray);
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.contact-form label::after {
-    content: '*';
-    color: var(--primary-orange);
-    margin-left: 4px;
-    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .contact-form input,
 .contact-form textarea,
 .contact-form select {
     width: 100%;
-    padding: 12px 18px;
+    padding: 10px 12px;
     border: 2px solid #e0e0e0;
     border-radius: var(--border-radius-sm);
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: var(--transition);
-    min-height: 46px;
-    font-weight: 500;
 }
 
 .contact-form input:focus,
@@ -1101,141 +678,87 @@ body::before {
 .contact-form select:focus {
     outline: none;
     border-color: var(--primary-green);
-    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15);
-    background: rgba(232, 245, 233, 0.3);
 }
 
 .contact-form textarea {
-    min-height: 110px;
+    min-height: 100px;
     resize: vertical;
-    padding: 14px 18px;
 }
 
-/* PRODUCT SELECTION STYLES */
 .product-selection {
-    background: linear-gradient(135deg, var(--light-brown) 0%, #e8e0d6 100%);
-    padding: 20px;
-    border-radius: var(--border-radius-md);
-    margin-bottom: 25px;
-    border: 2px solid #d7ccc8;
+    background: var(--light-brown);
+    padding: 15px;
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 20px;
 }
 
 .product-selection-title {
-    font-weight: 800;
-    margin-bottom: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
     color: var(--secondary-brown);
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.2rem;
-    justify-content: center;
+    font-size: 1rem;
 }
 
 .product-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
 }
 
 .product-option {
     display: flex;
     align-items: center;
-    padding: 14px;
+    padding: 10px;
     background: white;
     border-radius: var(--border-radius-sm);
-    border: 3px solid #e0e0e0;
+    border: 2px solid #e0e0e0;
     cursor: pointer;
     transition: var(--transition);
-    gap: 12px;
-    position: relative;
-}
-
-.product-option::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
-    opacity: 0;
-    transition: var(--transition);
-    border-radius: var(--border-radius-sm);
-    z-index: -1;
-}
-
-.product-option:hover {
-    border-color: var(--primary-green);
-    background: var(--light-green);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.product-option:hover::before {
-    opacity: 1;
+    gap: 10px;
 }
 
 .product-option.active {
     border-color: var(--primary-green);
-    background: rgba(40, 167, 69, 0.15);
-    box-shadow: 0 0 0 3px var(--primary-green);
+    background: rgba(40, 167, 69, 0.1);
 }
 
 .product-option input {
-    width: auto;
+    width: 16px;
+    height: 16px;
     margin: 0;
-    flex-shrink: 0;
-    height: 20px;
-    width: 20px;
 }
 
 .product-option-label {
     flex-grow: 1;
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
     color: var(--dark-gray);
 }
 
-.product-option-description {
-    font-size: 0.9rem;
-    color: var(--gray);
-    margin-top: 4px;
-    line-height: 1.4;
-}
-
-.product-icon.egg {
-    color: #ffc107;
-    font-size: 2rem;
-}
-
-.product-icon.chick {
-    color: #ff9800;
-    font-size: 2rem;
-}
-
-/* MODAL ACTIONS */
 .modal-actions {
     display: flex;
-    gap: 15px;
-    margin-top: 25px;
+    gap: 10px;
+    margin-top: 20px;
     flex-wrap: wrap;
 }
 
 .contact-btn {
     flex: 1;
-    min-width: 160px;
-    padding: 14px 20px;
+    min-width: 140px;
+    padding: 10px 15px;
     border: none;
     border-radius: 50px;
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    gap: 8px;
 }
 
 .whatsapp-btn {
@@ -1243,46 +766,27 @@ body::before {
     color: white;
 }
 
-.whatsapp-btn:hover {
-    background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.5);
-}
-
 .cancel-btn {
-    background: linear-gradient(135deg, #f5f5f5 0%, #e9ecef 100%);
+    background: var(--light-gray);
     color: #666;
     border: 2px solid #e0e0e0;
 }
 
-.cancel-btn:hover {
-    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-    transform: translateY(-3px);
-    border-color: #ccc;
-}
-
 .close-modal {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5rem;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
     color: white;
     background: rgba(0,0,0,0.3);
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-}
-
-.close-modal:hover {
-    background: rgba(0,0,0,0.5);
-    transform: rotate(90deg) scale(1.1);
 }
 
 /* FOOTER */
@@ -1290,29 +794,15 @@ footer {
     background: linear-gradient(135deg, var(--dark-green) 0%, #0a3d19 100%);
     color: rgba(255, 255, 255, 0.9);
     text-align: center;
-    padding: 40px 20px;
-    border-radius: var(--border-radius-xl);
+    padding: 30px 20px;
+    border-radius: var(--border-radius-lg);
     margin-top: 40px;
-    box-shadow: var(--shadow-lg);
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, var(--primary-orange) 0%, var(--egg-yellow) 50%, var(--primary-orange) 100%);
 }
 
 .footer-logo {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 800;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: block;
     color: white;
     display: flex;
@@ -1323,64 +813,45 @@ footer::before {
 
 .footer-about {
     max-width: 700px;
-    margin: 0 auto 25px;
+    margin: 0 auto 20px;
     line-height: 1.6;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
 }
 
 .footer-contact {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 15px;
     flex-wrap: wrap;
-    margin: 20px 0;
+    margin: 15px 0;
 }
 
 .contact-info {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1rem;
+    gap: 8px;
+    font-size: 0.9rem;
     background: rgba(255, 255, 255, 0.1);
-    padding: 8px 20px;
+    padding: 6px 15px;
     border-radius: 50px;
-    transition: var(--transition);
-}
-
-.contact-info:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
 }
 
 .footer-nav {
     display: flex;
     justify-content: center;
-    gap: 25px;
-    margin: 25px 0;
+    gap: 15px;
+    margin: 15px 0;
     flex-wrap: wrap;
 }
 
 .footer-nav a {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
     transition: var(--transition);
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: var(--border-radius-sm);
-    position: relative;
-}
-
-.footer-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 70%;
-    height: 2px;
-    background: var(--egg-yellow);
-    transition: var(--transition);
 }
 
 .footer-nav a:hover {
@@ -1388,61 +859,24 @@ footer::before {
     color: white;
 }
 
-.footer-nav a:hover::after {
-    transform: translateX(-50%) scaleX(1);
-}
-
 .copyright {
-    margin-top: 25px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     opacity: 0.85;
 }
 
-/* ANIMACIONES */
-@keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
-}
-
-.breeder-card {
-    animation: fadeIn 0.6s ease forwards;
-    opacity: 0;
-}
-
-.breeder-card:nth-child(1) { animation-delay: 0.1s; }
-.breeder-card:nth-child(2) { animation-delay: 0.2s; }
-.breeder-card:nth-child(3) { animation-delay: 0.3s; }
-.breeder-card:nth-child(4) { animation-delay: 0.4s; }
-.breeder-card:nth-child(5) { animation-delay: 0.5s; }
-.breeder-card:nth-child(6) { animation-delay: 0.6s; }
-
-/* RESPONSIVE - MEJORADO */
-@media (max-width: 1024px) {
-    .breeders-grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 30px;
+/* RESPONSIVE DESIGN - MEJORADO */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
     }
     
-    .breed-header {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-}
-
-@media (max-width: 768px) {
     .main-nav {
-        padding: 12px 15px;
-        margin: 15px auto;
         flex-direction: column;
-        text-align: center;
+        padding: 12px;
+        gap: 10px;
     }
     
     .nav-brand {
@@ -1451,86 +885,33 @@ footer::before {
     }
     
     .nav-brand h1 {
-        font-size: 1.5rem;
-    }
-    
-    .nav-links {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 10px;
-    }
-    
-    .nav-link {
-        padding: 8px 15px;
-        font-size: 0.9rem;
-        min-width: auto;
+        font-size: 1.2rem;
     }
     
     .hero {
-        padding: 40px 15px;
-        margin-bottom: 30px;
+        padding: 30px 15px;
     }
     
     .hero h1 {
-        font-size: 2.2rem;
+        font-size: 1.6rem;
     }
     
     .hero p {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     .search-container {
         flex-direction: column;
     }
     
-    .search-input,
-    .search-btn {
+    .search-input, .search-btn {
         width: 100%;
-        border-radius: var(--border-radius-md) !important;
-    }
-    
-    .filter-container,
-    .community-filter-container {
-        flex-direction: row;
-        justify-content: flex-start;
-        overflow-x: auto;
-        padding: 10px 0;
-        scrollbar-width: thin;
-    }
-    
-    .filter-btn,
-    .community-btn {
-        flex-shrink: 0;
-        min-width: 120px;
-        font-size: 0.9rem;
+        border-radius: var(--border-radius-sm) !important;
     }
     
     .breeders-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
-    }
-    
-    .breeder-card {
-        max-width: 100%;
-    }
-    
-    .breeder-header {
-        padding: 16px;
-    }
-    
-    .breeder-name {
-        font-size: 1.4rem;
-    }
-    
-    .breed-tab {
-        min-width: 130px;
-        padding: 10px 15px;
-        font-size: 0.9rem;
-    }
-    
-    .breed-image-container {
-        height: 250px;
+        gap: 20px;
     }
     
     .breed-info {
@@ -1549,7 +930,10 @@ footer::before {
     .modal-content {
         width: 95%;
         margin: 10px auto;
-        max-width: 550px;
+    }
+    
+    .product-options {
+        grid-template-columns: 1fr;
     }
     
     .modal-actions {
@@ -1560,109 +944,62 @@ footer::before {
         width: 100%;
         min-width: auto;
     }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.4rem;
+    }
     
-    .product-options {
-        grid-template-columns: 1fr;
+    .filters-title, .community-title {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .filter-btn, .community-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .breed-image-container {
+        height: 180px;
     }
     
     .footer-nav {
         flex-direction: column;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
     }
     
     .footer-nav a {
         width: 100%;
-        max-width: 280px;
-        justify-content: center;
+        max-width: 250px;
+        text-align: center;
     }
 }
 
-@media (max-width: 480px) {
-    .main-nav {
-        padding: 10px;
-        margin: 10px auto;
+/* Para pantallas muy grandes */
+@media (min-width: 1400px) {
+    .breeders-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
-    
-    .nav-brand h1 {
-        font-size: 1.3rem;
+}
+
+/* Ajustes para mejorar la legibilidad */
+@media (max-width: 1200px) {
+    .breeders-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     }
-    
-    .nav-link {
-        padding: 7px 12px;
-        font-size: 0.85rem;
-    }
-    
-    .hero h1 {
-        font-size: 1.8rem;
-    }
-    
-    .hero p {
-        font-size: 1rem;
-    }
-    
-    .filters-title,
-    .community-title {
-        font-size: 1.4rem;
-    }
-    
-    .section-title {
-        font-size: 1.8rem;
-    }
-    
-    .breeder-name {
-        font-size: 1.3rem;
-    }
-    
-    .breed-tab {
-        min-width: 110px;
-        font-size: 0.85rem;
-        padding: 8px 12px;
-    }
-    
-    .breed-image-container {
-        height: 200px;
-    }
-    
-    .breed-title {
-        font-size: 1.5rem;
-    }
-    
-    .modal-title {
-        font-size: 1.6rem;
-    }
-    
-    .contact-form input,
-    .contact-form select {
-        font-size: 0.95rem;
-        padding: 10px 15px;
-    }
-    
-    .product-selection-title {
-        font-size: 1.1rem;
-    }
-    
-    .product-option-label {
-        font-size: 0.95rem;
-    }
-    
-    .product-icon.egg,
-    .product-icon.chick {
-        font-size: 1.8rem;
-    }
-    
-    .footer-logo {
-        font-size: 1.8rem;
-    }
-    
-    .footer-nav a {
-        font-size: 0.95rem;
-        padding: 6px 12px;
-    }
-    
-    .contact-info {
-        font-size: 0.95rem;
-        padding: 6px 15px;
+}
+
+/* Mejoras para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .breeders-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 }
 </style>
@@ -1692,7 +1029,7 @@ footer::before {
 <section class="hero">
     <div class="hero-content">
         <h1>Directorio de Criadores de Aves en España</h1>
-        <p>Encuentra criadores especializados en huevos fértiles y aves por raza: gallinas, faisanes, patos, pavos y codornices</p>
+        <p>Encuentra criadores especializados en huevos fértiles y aves por raza</p>
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Buscar por raza, provincia o tipo de ave...">
             <button class="search-btn">
@@ -1720,7 +1057,7 @@ footer::before {
 <!-- FILTROS POR COMUNIDAD AUTÓNOMA -->
 <section class="community-filters">
     <h2 class="community-title">
-        <i class="fas fa-map-marked-alt"></i> Filtrar por Comunidad Autónoma
+        <i class="fas fa-map-marked-alt"></i> Filtrar por Comunidad
     </h2>
     <div class="community-filter-container" id="community-filter-container">
         <button class="community-btn active" data-community="all">
@@ -1735,12 +1072,6 @@ footer::before {
         <button class="community-btn" data-community="madrid">
             <span class="flag-icon">🇪🇸</span> Madrid
         </button>
-        <button class="community-btn" data-community="valencia">
-            <span class="flag-icon">🇪🇸</span> Comunidad Valenciana
-        </button>
-        <button class="community-btn" data-community="galicia">
-            <span class="flag-icon">🇪🇸</span> Galicia
-        </button>
     </div>
 </section>
 
@@ -1748,7 +1079,7 @@ footer::before {
 <section class="breeders-section">
     <h2 class="section-title">Nuestros Criadores Destacados</h2>
     <div class="breeders-grid">
-        <!-- Criador 1 - Gallinas Felices -->
+        <!-- Criador 1 -->
         <div class="breeder-card" data-breeder="Gallinas Felices" data-whatsapp="34612345678" data-province="madrid" data-birds="gallinas" data-products="both">
             <div class="breeder-header">
                 <h3 class="breeder-name">Criadero Gallinas Felices</h3>
@@ -1756,7 +1087,7 @@ footer::before {
                     <i class="fas fa-map-marker-alt"></i> Madrid, España
                 </div>
                 <div class="products-available">
-                    <i class="fas fa-shopping-basket"></i> Vende: Huevos fértiles y crías
+                    <i class="fas fa-shopping-basket"></i> Huevos fértiles y crías
                 </div>
             </div>
             <div class="breeder-description">
@@ -1782,62 +1113,52 @@ footer::before {
                 </div>
             </div>
             
-            <!-- SISTEMA DE PESTAÑAS MEJORADO -->
+            <!-- SISTEMA DE PESTAÑAS -->
             <div class="breeds-section">
                 <h3 class="breeds-title">Razas Disponibles</h3>
                 <div class="breeds-tabs-container">
                     <div class="breeds-tabs" id="tabs-1">
                         <button class="breed-tab active" data-target="breed-1-1">
-                            <i class="fas fa-egg breed-tab-icon"></i> Leghorn Blanca
+                            <i class="fas fa-egg"></i> Leghorn Blanca
                         </button>
                         <button class="breed-tab" data-target="breed-1-2">
-                            <i class="fas fa-baby breed-tab-icon"></i> Rhode Island
-                        </button>
-                        <button class="breed-tab" data-target="breed-1-3">
-                            <i class="fas fa-feather breed-tab-icon"></i> Sussex
+                            <i class="fas fa-baby"></i> Rhode Island
                         </button>
                     </div>
                     
-                    <!-- CONTENIDO DE LAS PESTAÑAS -->
                     <div class="breeds-tab-content active" id="breed-1-1">
                         <div class="breed-detail">
-                            <div class="breed-header">
-                                <div class="breed-title-container">
-                                    <h3 class="breed-title">Leghorn Blanca</h3>
-                                    <span class="breed-product-tag both">
-                                        <i class="fas fa-egg"></i> Huevos | <i class="fas fa-baby"></i> Crías
-                                    </span>
-                                </div>
-                                <div class="breed-image-container">
-                                    <img src="https://images.unsplash.com/photo-1563298725-53eebfa6d8b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
-                                         alt="Gallina Leghorn"
-                                         class="breed-image"
-                                         data-breed="Leghorn Blanca"
-                                         data-breeder="Criadero Gallinas Felices"
-                                         data-products="both">
-                                </div>
+                            <div class="breed-title-container">
+                                <h3 class="breed-title">Leghorn Blanca</h3>
+                                <span class="breed-product-tag both">
+                                    <i class="fas fa-egg"></i> Huevos | <i class="fas fa-baby"></i> Crías
+                                </span>
+                            </div>
+                            <div class="breed-image-container">
+                                <img src="https://images.unsplash.com/photo-1563298725-53eebfa6d8b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
+                                     alt="Gallina Leghorn"
+                                     class="breed-image"
+                                     data-breed="Leghorn Blanca"
+                                     data-breeder="Criadero Gallinas Felices"
+                                     data-products="both">
                             </div>
                             <div class="breed-info">
                                 <div class="info-item">
                                     <h4><i class="fas fa-info-circle"></i> Descripción</h4>
-                                    <p>Raza italiana de alta producción de huevos blancos. Excelente conversión alimenticia y temperamento activo.</p>
+                                    <p>Raza italiana de alta producción de huevos blancos. Excelente conversión alimenticia.</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-chart-line"></i> Producción</h4>
-                                    <p>280-320 huevos/año | Peso adulto: 2-3 kg | Madurez sexual: 5-6 meses</p>
+                                    <p>280-320 huevos/año | Peso adulto: 2-3 kg</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-tag"></i> Precios</h4>
-                                    <p>Huevos fértiles: 2.50€/unidad | Pollitos: 8-12€ según edad</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-check-circle"></i> Disponibilidad</h4>
-                                    <p>Stock disponible todo el año | Envíos semanales</p>
+                                    <p>Huevos fértiles: 2.50€ | Pollitos: 8-12€</p>
                                 </div>
                             </div>
                             <div class="breed-actions">
                                 <button class="breed-btn info-btn" data-breed="Leghorn Blanca" data-breeder="Criadero Gallinas Felices" data-products="both">
-                                    <i class="fas fa-info-circle"></i> Más información
+                                    <i class="fas fa-info-circle"></i> Más info
                                 </button>
                                 <button class="breed-btn buy-btn" data-breed="Leghorn Blanca" data-breeder="Criadero Gallinas Felices" data-products="both">
                                     <i class="fas fa-shopping-cart"></i> Comprar
@@ -1848,92 +1169,39 @@ footer::before {
                     
                     <div class="breeds-tab-content" id="breed-1-2">
                         <div class="breed-detail">
-                            <div class="breed-header">
-                                <div class="breed-title-container">
-                                    <h3 class="breed-title">Rhode Island Red</h3>
-                                    <span class="breed-product-tag both">
-                                        <i class="fas fa-egg"></i> Huevos | <i class="fas fa-baby"></i> Crías
-                                    </span>
-                                </div>
-                                <div class="breed-image-container">
-                                    <img src="https://images.unsplash.com/photo-1563281577-a7a47b9d3a71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
-                                         alt="Gallina Rhode Island"
-                                         class="breed-image"
-                                         data-breed="Rhode Island Red"
-                                         data-breeder="Criadero Gallinas Felices"
-                                         data-products="both">
-                                </div>
+                            <div class="breed-title-container">
+                                <h3 class="breed-title">Rhode Island Red</h3>
+                                <span class="breed-product-tag both">
+                                    <i class="fas fa-egg"></i> Huevos | <i class="fas fa-baby"></i> Crías
+                                </span>
+                            </div>
+                            <div class="breed-image-container">
+                                <img src="https://images.unsplash.com/photo-1563281577-a7a47b9d3a71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
+                                     alt="Gallina Rhode Island"
+                                     class="breed-image"
+                                     data-breed="Rhode Island Red"
+                                     data-breeder="Criadero Gallinas Felices"
+                                     data-products="both">
                             </div>
                             <div class="breed-info">
                                 <div class="info-item">
                                     <h4><i class="fas fa-info-circle"></i> Descripción</h4>
-                                    <p>Raza americana de doble propósito. Robusta, resistente y excelente ponedora de huevos marrones.</p>
+                                    <p>Raza americana de doble propósito. Robusta y resistente.</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-chart-line"></i> Producción</h4>
-                                    <p>250-300 huevos/año | Peso adulto: 3-4 kg | Madurez sexual: 6-7 meses</p>
+                                    <p>250-300 huevos/año | Peso adulto: 3-4 kg</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-tag"></i> Precios</h4>
-                                    <p>Huevos fértiles: 3€/unidad | Pollitos: 10-15€ según edad</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-check-circle"></i> Disponibilidad</h4>
-                                    <p>Stock limitado | Pedidos con 2 semanas de antelación</p>
+                                    <p>Huevos fértiles: 3€ | Pollitos: 10-15€</p>
                                 </div>
                             </div>
                             <div class="breed-actions">
                                 <button class="breed-btn info-btn" data-breed="Rhode Island Red" data-breeder="Criadero Gallinas Felices" data-products="both">
-                                    <i class="fas fa-info-circle"></i> Más información
+                                    <i class="fas fa-info-circle"></i> Más info
                                 </button>
                                 <button class="breed-btn buy-btn" data-breed="Rhode Island Red" data-breeder="Criadero Gallinas Felices" data-products="both">
-                                    <i class="fas fa-shopping-cart"></i> Comprar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="breeds-tab-content" id="breed-1-3">
-                        <div class="breed-detail">
-                            <div class="breed-header">
-                                <div class="breed-title-container">
-                                    <h3 class="breed-title">Sussex</h3>
-                                    <span class="breed-product-tag eggs">
-                                        <i class="fas fa-egg"></i> Solo Huevos
-                                    </span>
-                                </div>
-                                <div class="breed-image-container">
-                                    <img src="https://images.unsplash.com/photo-1591872203535-8a7d5c7b9e47?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
-                                         alt="Gallina Sussex"
-                                         class="breed-image"
-                                         data-breed="Sussex"
-                                         data-breeder="Criadero Gallinas Felices"
-                                         data-products="eggs">
-                                </div>
-                            </div>
-                            <div class="breed-info">
-                                <div class="info-item">
-                                    <h4><i class="fas fa-info-circle"></i> Descripción</h4>
-                                    <p>Raza inglesa tranquila y dócil. Excelente para principiantes y producción familiar de huevos.</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-chart-line"></i> Producción</h4>
-                                    <p>200-250 huevos/año | Peso adulto: 3-3.5 kg | Madurez sexual: 6-7 meses</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-tag"></i> Precios</h4>
-                                    <p>Huevos fértiles: 2.80€/unidad | Mínimo compra: 12 unidades</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-check-circle"></i> Disponibilidad</h4>
-                                    <p>Stock disponible | Entrega en 3-5 días hábiles</p>
-                                </div>
-                            </div>
-                            <div class="breed-actions">
-                                <button class="breed-btn info-btn" data-breed="Sussex" data-breeder="Criadero Gallinas Felices" data-products="eggs">
-                                    <i class="fas fa-info-circle"></i> Más información
-                                </button>
-                                <button class="breed-btn buy-btn" data-breed="Sussex" data-breeder="Criadero Gallinas Felices" data-products="eggs">
                                     <i class="fas fa-shopping-cart"></i> Comprar
                                 </button>
                             </div>
@@ -1943,7 +1211,7 @@ footer::before {
             </div>
         </div>
 
-        <!-- Criador 2 - Aves del Sur -->
+        <!-- Criador 2 -->
         <div class="breeder-card" data-breeder="Aves del Sur" data-whatsapp="34623456789" data-province="andalucia" data-birds="patos,pavos" data-products="eggs">
             <div class="breeder-header">
                 <h3 class="breeder-name">Aves del Sur</h3>
@@ -1951,11 +1219,11 @@ footer::before {
                     <i class="fas fa-map-marker-alt"></i> Sevilla, Andalucía
                 </div>
                 <div class="products-available">
-                    <i class="fas fa-shopping-basket"></i> Vende: Huevos fértiles
+                    <i class="fas fa-shopping-basket"></i> Huevos fértiles
                 </div>
             </div>
             <div class="breeder-description">
-                <p class="description-text">Criadero especializado en aves acuáticas y de corral. Contamos con instalaciones de última generación y un equipo veterinario propio para garantizar la salud y bienestar de nuestras aves.</p>
+                <p class="description-text">Criadero especializado en aves acuáticas y de corral. Contamos con instalaciones de última generación y un equipo veterinario propio.</p>
                 <div class="breeder-contact">
                     <div class="contact-item">
                         <i class="fas fa-phone"></i> +34 954 123 456
@@ -1974,61 +1242,51 @@ footer::before {
                 </div>
             </div>
             
-            <!-- SISTEMA DE PESTAÑAS PARA EL CRIADOR 2 -->
             <div class="breeds-section">
                 <h3 class="breeds-title">Nuestras Razas</h3>
                 <div class="breeds-tabs-container">
                     <div class="breeds-tabs" id="tabs-2">
                         <button class="breed-tab active" data-target="breed-2-1">
-                            <i class="fas fa-feather breed-tab-icon"></i> Pato Pekín
+                            <i class="fas fa-feather"></i> Pato Pekín
                         </button>
                         <button class="breed-tab" data-target="breed-2-2">
-                            <i class="fas fa-feather breed-tab-icon"></i> Pato Real
-                        </button>
-                        <button class="breed-tab" data-target="breed-2-3">
-                            <i class="fas fa-drumstick-bite breed-tab-icon"></i> Pavo Bronce
+                            <i class="fas fa-feather"></i> Pato Real
                         </button>
                     </div>
                     
                     <div class="breeds-tab-content active" id="breed-2-1">
                         <div class="breed-detail">
-                            <div class="breed-header">
-                                <div class="breed-title-container">
-                                    <h3 class="breed-title">Pato Pekín</h3>
-                                    <span class="breed-product-tag eggs">
-                                        <i class="fas fa-egg"></i> Huevos Fértiles
-                                    </span>
-                                </div>
-                                <div class="breed-image-container">
-                                    <img src="https://images.unsplash.com/photo-1552728089-57bdde30beb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
-                                         alt="Pato Pekín"
-                                         class="breed-image"
-                                         data-breed="Pato Pekín"
-                                         data-breeder="Aves del Sur"
-                                         data-products="eggs">
-                                </div>
+                            <div class="breed-title-container">
+                                <h3 class="breed-title">Pato Pekín</h3>
+                                <span class="breed-product-tag eggs">
+                                    <i class="fas fa-egg"></i> Huevos Fértiles
+                                </span>
+                            </div>
+                            <div class="breed-image-container">
+                                <img src="https://images.unsplash.com/photo-1552728089-57bdde30beb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
+                                     alt="Pato Pekín"
+                                     class="breed-image"
+                                     data-breed="Pato Pekín"
+                                     data-breeder="Aves del Sur"
+                                     data-products="eggs">
                             </div>
                             <div class="breed-info">
                                 <div class="info-item">
                                     <h4><i class="fas fa-info-circle"></i> Descripción</h4>
-                                    <p>Raza de rápido crecimiento, excelente para producción de carne. Muy resistente y fácil de criar.</p>
+                                    <p>Raza de rápido crecimiento, excelente para producción de carne.</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-chart-line"></i> Producción</h4>
-                                    <p>140-180 huevos/año | Peso adulto: 4-5 kg | Incubación: 28 días</p>
+                                    <p>140-180 huevos/año | Peso adulto: 4-5 kg</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-tag"></i> Precios</h4>
-                                    <p>Huevos fértiles: 3.50€/unidad | Descuentos por lotes</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-check-circle"></i> Disponibilidad</h4>
-                                    <p>Stock todo el año | Fertilidad garantizada >85%</p>
+                                    <p>Huevos fértiles: 3.50€/unidad</p>
                                 </div>
                             </div>
                             <div class="breed-actions">
                                 <button class="breed-btn info-btn" data-breed="Pato Pekín" data-breeder="Aves del Sur" data-products="eggs">
-                                    <i class="fas fa-info-circle"></i> Más información
+                                    <i class="fas fa-info-circle"></i> Más info
                                 </button>
                                 <button class="breed-btn buy-btn" data-breed="Pato Pekín" data-breeder="Aves del Sur" data-products="eggs">
                                     <i class="fas fa-shopping-cart"></i> Comprar
@@ -2039,92 +1297,39 @@ footer::before {
                     
                     <div class="breeds-tab-content" id="breed-2-2">
                         <div class="breed-detail">
-                            <div class="breed-header">
-                                <div class="breed-title-container">
-                                    <h3 class="breed-title">Pato Real</h3>
-                                    <span class="breed-product-tag eggs">
-                                        <i class="fas fa-egg"></i> Huevos Fértiles
-                                    </span>
-                                </div>
-                                <div class="breed-image-container">
-                                    <img src="https://images.unsplash.com/photo-1551361415-2b5a4a2c5fb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
-                                         alt="Pato Real"
-                                         class="breed-image"
-                                         data-breed="Pato Real"
-                                         data-breeder="Aves del Sur"
-                                         data-products="eggs">
-                                </div>
+                            <div class="breed-title-container">
+                                <h3 class="breed-title">Pato Real</h3>
+                                <span class="breed-product-tag eggs">
+                                    <i class="fas fa-egg"></i> Huevos Fértiles
+                                </span>
+                            </div>
+                            <div class="breed-image-container">
+                                <img src="https://images.unsplash.com/photo-1551361415-2b5a4a2c5fb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
+                                     alt="Pato Real"
+                                     class="breed-image"
+                                     data-breed="Pato Real"
+                                     data-breeder="Aves del Sur"
+                                     data-products="eggs">
                             </div>
                             <div class="breed-info">
                                 <div class="info-item">
                                     <h4><i class="fas fa-info-circle"></i> Descripción</h4>
-                                    <p>Raza ornamental y para producción. Plumaje espectacular, carne de excelente calidad.</p>
+                                    <p>Raza ornamental y para producción. Plumaje espectacular.</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-chart-line"></i> Producción</h4>
-                                    <p>100-140 huevos/año | Peso adulto: 3-4 kg | Periodo de puesta: primavera</p>
+                                    <p>100-140 huevos/año | Peso adulto: 3-4 kg</p>
                                 </div>
                                 <div class="info-item">
                                     <h4><i class="fas fa-tag"></i> Precios</h4>
-                                    <p>Huevos fértiles: 4€/unidad | Mínimo 6 unidades</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-check-circle"></i> Disponibilidad</h4>
-                                    <p>Temporada primavera-verano | Pedidos anticipados</p>
+                                    <p>Huevos fértiles: 4€/unidad</p>
                                 </div>
                             </div>
                             <div class="breed-actions">
                                 <button class="breed-btn info-btn" data-breed="Pato Real" data-breeder="Aves del Sur" data-products="eggs">
-                                    <i class="fas fa-info-circle"></i> Más información
+                                    <i class="fas fa-info-circle"></i> Más info
                                 </button>
                                 <button class="breed-btn buy-btn" data-breed="Pato Real" data-breeder="Aves del Sur" data-products="eggs">
-                                    <i class="fas fa-shopping-cart"></i> Comprar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="breeds-tab-content" id="breed-2-3">
-                        <div class="breed-detail">
-                            <div class="breed-header">
-                                <div class="breed-title-container">
-                                    <h3 class="breed-title">Pavo Bronce</h3>
-                                    <span class="breed-product-tag eggs">
-                                        <i class="fas fa-egg"></i> Huevos Fértiles
-                                    </span>
-                                </div>
-                                <div class="breed-image-container">
-                                    <img src="https://images.unsplash.com/photo-1549317601-8f5d42fd4c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80"
-                                         alt="Pavo Bronce"
-                                         class="breed-image"
-                                         data-breed="Pavo Bronce"
-                                         data-breeder="Aves del Sur"
-                                         data-products="eggs">
-                                </div>
-                            </div>
-                            <div class="breed-info">
-                                <div class="info-item">
-                                    <h4><i class="fas fa-info-circle"></i> Descripción</h4>
-                                    <p>Raza tradicional para festividades. Carne jugosa y de excelente sabor. Tamaño grande.</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-chart-line"></i> Producción</h4>
-                                    <p>80-120 huevos/año | Peso adulto: 8-12 kg | Incubación: 28 días</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-tag"></i> Precios</h4>
-                                    <p>Huevos fértiles: 6€/unidad | Descuento por docena</p>
-                                </div>
-                                <div class="info-item">
-                                    <h4><i class="fas fa-check-circle"></i> Disponibilidad</h4>
-                                    <p>Temporada limitada | Reservas anticipadas</p>
-                                </div>
-                            </div>
-                            <div class="breed-actions">
-                                <button class="breed-btn info-btn" data-breed="Pavo Bronce" data-breeder="Aves del Sur" data-products="eggs">
-                                    <i class="fas fa-info-circle"></i> Más información
-                                </button>
-                                <button class="breed-btn buy-btn" data-breed="Pavo Bronce" data-breeder="Aves del Sur" data-products="eggs">
                                     <i class="fas fa-shopping-cart"></i> Comprar
                                 </button>
                             </div>
@@ -2175,29 +1380,21 @@ footer::before {
                         <option value="barcelona">Barcelona</option>
                         <option value="valencia">Valencia</option>
                         <option value="sevilla">Sevilla</option>
-                        <option value="malaga">Málaga</option>
-                        <option value="bilbao">Bilbao</option>
-                        <option value="zaragoza">Zaragoza</option>
-                        <option value="alicante">Alicante</option>
-                        <option value="toledo">Toledo</option>
-                        <option value="granada">Granada</option>
-                        <option value="otra">Otra provincia</option>
                     </select>
                 </div>
                 
-                <!-- PRODUCT SELECTION SECTION -->
                 <div class="product-selection">
                     <div class="product-selection-title">
                         <i class="fas fa-shopping-basket"></i> ¿Qué producto te interesa?
                     </div>
                     <div class="product-options" id="productOptions">
-                        <!-- Product options will be dynamically inserted here -->
+                        <!-- Options inserted by JavaScript -->
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="contactMessage">Mensaje (Especifica cantidad de huevos o ejemplares que necesitas)</label>
-                    <textarea id="contactMessage" required></textarea>
+                    <label for="contactMessage">Mensaje</label>
+                    <textarea id="contactMessage" required placeholder="Especifica cantidad de huevos o ejemplares que necesitas"></textarea>
                 </div>
                 
                 <div class="modal-actions">
@@ -2216,7 +1413,7 @@ footer::before {
 <!-- FOOTER -->
 <footer>
     <span class="footer-logo"><i class="fas fa-egg"></i> CriadoresAves.es</span>
-    <p class="footer-about">Directorio especializado en criadores de aves en España. Conectamos a criadores profesionales con aficionados y empresas para la venta de huevos fértiles y aves por raza.</p>
+    <p class="footer-about">Directorio especializado en criadores de aves en España. Conectamos a criadores profesionales con aficionados y empresas.</p>
     <div class="footer-contact">
         <div class="contact-info">
             <i class="fas fa-envelope"></i> info@criadoresaves.es
@@ -2230,18 +1427,18 @@ footer::before {
     </div>
     <div class="footer-nav">
         <a href="#"><i class="fas fa-home"></i> Inicio</a>
-        <a href="#"><i class="fas fa-search"></i> Buscar Criadores</a>
+        <a href="#"><i class="fas fa-search"></i> Buscar</a>
         <a href="#"><i class="fas fa-egg"></i> Tipos de Aves</a>
         <a href="#"><i class="fas fa-info-circle"></i> Sobre Nosotros</a>
         <a href="#"><i class="fas fa-phone"></i> Contacto</a>
     </div>
-    <p class="copyright">© 2026 CriadoresAves.es - Todos los derechos reservados. Directorio de criadores verificados especializados en huevos fértiles y aves por raza.</p>
+    <p class="copyright">© 2026 CriadoresAves.es - Todos los derechos reservados.</p>
 </footer>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // SISTEMA DE PESTAÑAS PARA LAS RAZAS
+    // SISTEMA DE PESTAÑAS
     document.querySelectorAll('.breeds-tabs-container').forEach(container => {
         const tabs = container.querySelectorAll('.breed-tab');
         const tabContents = container.querySelectorAll('.breeds-tab-content');
@@ -2250,11 +1447,9 @@ document.addEventListener('DOMContentLoaded', function() {
             tab.addEventListener('click', () => {
                 const targetId = tab.getAttribute('data-target');
                 
-                // Remover clase activa de todas las pestañas
                 tabs.forEach(t => t.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
                 
-                // Agregar clase activa a la pestaña y contenido seleccionado
                 tab.classList.add('active');
                 document.getElementById(targetId).classList.add('active');
             });
@@ -2275,7 +1470,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let breederWhatsApp = '';
     let availableProducts = '';
     
-    // Función para abrir el modal
+    // Abrir modal
     function openModal(breed, breeder, whatsapp, products) {
         selectedBreed = breed;
         selectedBreeder = breeder;
@@ -2285,17 +1480,15 @@ document.addEventListener('DOMContentLoaded', function() {
         modalBreedName.textContent = selectedBreed;
         modalBreederName.textContent = selectedBreeder;
         
-        // Generate product options based on what the breeder offers for this breed
         generateProductOptions(availableProducts);
-        
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
     
-    // Abrir modal al hacer clic en botones "Comprar" o "Más información"
+    // Event listeners para abrir modal
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('buy-btn') || e.target.classList.contains('info-btn') ||
-            (e.target.closest('.buy-btn')) || (e.target.closest('.info-btn'))) {
+            e.target.closest('.buy-btn') || e.target.closest('.info-btn')) {
             const btn = e.target.classList.contains('buy-btn') || e.target.classList.contains('info-btn')
                 ? e.target
                 : e.target.closest('.buy-btn') || e.target.closest('.info-btn');
@@ -2304,7 +1497,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const breeder = btn.dataset.breeder;
             const products = btn.dataset.products;
             
-            // Encontrar el criador correspondiente
             const breederCard = document.querySelector(`.breeder-card[data-breeder="${breeder}"]`);
             if (breederCard) {
                 const breederWhatsApp = breederCard.dataset.whatsapp;
@@ -2312,7 +1504,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // También abrir modal al hacer clic en la imagen
         if (e.target.classList.contains('breed-image') || e.target.closest('.breed-image')) {
             const img = e.target.classList.contains('breed-image')
                 ? e.target
@@ -2323,7 +1514,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const breeder = img.dataset.breeder;
                 const products = img.dataset.products;
                 
-                // Encontrar el criador correspondiente
                 const breederCard = img.closest('.breeder-card');
                 if (breederCard) {
                     const breederWhatsApp = breederCard.dataset.whatsapp;
@@ -2333,7 +1523,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Generate product options in the modal
+    // Generar opciones de producto
     function generateProductOptions(products) {
         productOptionsContainer.innerHTML = '';
         const options = [];
@@ -2363,21 +1553,13 @@ document.addEventListener('DOMContentLoaded', function() {
             optionDiv.className = 'product-option' + (index === 0 ? ' active' : '');
             optionDiv.innerHTML = `
                 <input type="radio" id="${option.id}" name="productType" value="${option.value}" ${index === 0 ? 'checked' : ''}>
-                <div class="product-icon ${option.icon}">
-                    ${option.icon === 'egg' ? '<i class="fas fa-egg"></i>' : '<i class="fas fa-baby"></i>'}
-                </div>
-                <div>
-                    <div class="product-option-label">${option.label}</div>
-                    <div class="product-option-description">${option.description}</div>
-                </div>
+                ${option.icon === 'egg' ? '<i class="fas fa-egg"></i>' : '<i class="fas fa-baby"></i>'}
+                <div class="product-option-label">${option.label}</div>
             `;
             
-            // Add event listener to handle selection
             optionDiv.addEventListener('click', () => {
                 const radio = optionDiv.querySelector('input[type="radio"]');
                 radio.checked = true;
-                
-                // Update active state
                 document.querySelectorAll('.product-option').forEach(opt => {
                     opt.classList.remove('active');
                 });
@@ -2388,37 +1570,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Handle product option selection
-    document.addEventListener('change', function(e) {
-        if (e.target.name === 'productType') {
-            document.querySelectorAll('.product-option').forEach(opt => {
-                opt.classList.remove('active');
-                if (opt.querySelector(`input[value="${e.target.value}"]`)) {
-                    opt.classList.add('active');
-                }
-            });
-        }
-    });
-    
     // Cerrar modal
     function closeModalFunc() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
         document.getElementById('breedContactForm').reset();
-        productOptionsContainer.innerHTML = '';
     }
     
     closeModal.addEventListener('click', closeModalFunc);
     cancelContact.addEventListener('click', closeModalFunc);
     
-    // Cerrar modal al hacer clic fuera del contenido
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModalFunc();
         }
     });
     
-    // Generar enlace de WhatsApp
+    // WhatsApp
     whatsappContact.addEventListener('click', () => {
         const name = document.getElementById('contactName').value;
         const province = document.getElementById('contactProvince').value;
@@ -2426,11 +1594,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedProduct = document.querySelector('input[name="productType"]:checked');
         
         if (!name || !province || !message || !selectedProduct) {
-            alert('Por favor, completa todos los campos obligatorios antes de contactar.');
+            alert('Por favor, completa todos los campos obligatorios.');
             return;
         }
         
-        // Get product name for the message
         let productName = '';
         if (selectedProduct.value === 'eggs') {
             productName = 'huevos fértiles';
@@ -2447,7 +1614,7 @@ Mi nombre es ${name}, soy de ${province} y necesito: ${message}`;
         window.open(whatsappUrl, '_blank');
     });
     
-    // Filtros por tipo de ave
+    // Filtros
     const birdTypeButtons = document.querySelectorAll('#bird-type-filter-container .filter-btn');
     const communityButtons = document.querySelectorAll('#community-filter-container .community-btn');
     const breederCards = document.querySelectorAll('.breeder-card');
@@ -2455,10 +1622,8 @@ Mi nombre es ${name}, soy de ${province} y necesito: ${message}`;
     let currentBirdType = 'all';
     let currentCommunity = 'all';
     
-    // Filtros por tipo de ave
     birdTypeButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Actualizar botones activos
             birdTypeButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             currentBirdType = button.dataset.filter;
@@ -2466,10 +1631,8 @@ Mi nombre es ${name}, soy de ${province} y necesito: ${message}`;
         });
     });
     
-    // Filtros por comunidad
     communityButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Actualizar botones activos
             communityButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             currentCommunity = button.dataset.community;
@@ -2477,19 +1640,16 @@ Mi nombre es ${name}, soy de ${province} y necesito: ${message}`;
         });
     });
     
-    // Aplicar filtros combinados
     function applyFilters() {
         breederCards.forEach(card => {
             const birdTypes = card.dataset.birds.split(',');
             const province = card.dataset.province;
             let showCard = true;
             
-            // Filtrar por tipo de ave
             if (currentBirdType !== 'all' && !birdTypes.includes(currentBirdType)) {
                 showCard = false;
             }
             
-            // Filtrar por comunidad
             if (currentCommunity !== 'all' && province !== currentCommunity) {
                 showCard = false;
             }
@@ -2515,13 +1675,11 @@ Mi nombre es ${name}, soy de ${province} y necesito: ${message}`;
             const description = card.querySelector('.description-text').textContent.toLowerCase();
             const breeds = Array.from(card.querySelectorAll('.breed-title'))
                 .map(el => el.textContent.toLowerCase()).join(' ');
-            const productsText = card.querySelector('.products-available').textContent.toLowerCase();
             
             if (breederName.includes(searchTerm) ||
                 location.includes(searchTerm) ||
                 description.includes(searchTerm) ||
-                breeds.includes(searchTerm) ||
-                productsText.includes(searchTerm)) {
+                breeds.includes(searchTerm)) {
                 card.style.display = 'flex';
             } else {
                 card.style.display = 'none';
@@ -2537,13 +1695,6 @@ Mi nombre es ${name}, soy de ${province} y necesito: ${message}`;
             link.classList.add('active');
         });
     });
-    
-    // Asegurar que las tarjetas se muestren correctamente al cargar
-    setTimeout(() => {
-        document.querySelectorAll('.breeder-card').forEach(card => {
-            card.style.opacity = '1';
-        });
-    }, 100);
 });
 </script>
 </body>
