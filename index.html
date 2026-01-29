@@ -60,7 +60,7 @@ body {
     padding: 0 20px;
 }
 
-/* NAVEGACIÓN - COLOR PASTEL SUAVE */
+/* ========== NAVEGACIÓN SIMPLIFICADA ========== */
 .main-nav {
     display: flex;
     justify-content: space-between;
@@ -70,12 +70,11 @@ body {
     border-radius: var(--border-radius-lg);
     margin: 15px auto;
     box-shadow: var(--shadow-md);
-    position: sticky;
-    top: 10px;
-    z-index: 1000;
     flex-wrap: wrap;
     gap: 15px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    /* NO ES FIJADO - NO PERSIGUE */
+    position: relative;
 }
 
 .nav-brand {
@@ -89,55 +88,62 @@ body {
 
 .nav-brand i {
     font-size: 2rem;
-    color: var(--text-white);
-    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-darker); /* ICONO OSCURO */
+    background: rgba(255, 255, 255, 0.8);
     padding: 10px;
     border-radius: 50%;
+    box-shadow: var(--shadow-sm);
 }
 
 .nav-brand h1 {
     font-size: 1.5rem;
-    color: var(--text-white);
-    font-weight: 700;
+    color: var(--text-darker); /* TEXTO OSCURO */
+    font-weight: 800;
     white-space: nowrap;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .nav-links {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
+/* BOTONES DE NAVEGACIÓN CON COLORES OSCUROS */
 .nav-link {
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.25);
+    padding: 12px 25px;
+    background: rgba(255, 255, 255, 0.9);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--border-radius-md);
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: var(--text-white);
+    gap: 10px;
+    color: var(--text-darker); /* TEXTO OSCURO */
     white-space: nowrap;
-    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-link i {
+    color: var(--text-darker); /* ICONO OSCURO */
+    font-size: 1.1rem;
 }
 
 .nav-link:hover {
-    background: rgba(255, 255, 255, 0.35);
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: white;
+    transform: translateY(-3px);
+    border-color: var(--primary-pastel);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .nav-link.active {
-    background: rgba(255, 255, 255, 0.4);
-    border-color: var(--text-white);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: white;
+    color: var(--text-darker);
+    border-color: var(--text-darker);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* HERO SECTION - COLOR PASTEL */
@@ -275,13 +281,30 @@ body {
     padding: 8px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-pastel) #f1f1f1;
 }
 
 .filter-carousel-track::-webkit-scrollbar,
 .community-carousel-track::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
+    height: 8px;
+}
+
+.filter-carousel-track::-webkit-scrollbar-track,
+.community-carousel-track::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.filter-carousel-track::-webkit-scrollbar-thumb,
+.community-carousel-track::-webkit-scrollbar-thumb {
+    background: var(--primary-pastel);
+    border-radius: 10px;
+}
+
+.filter-carousel-track::-webkit-scrollbar-thumb:hover,
+.community-carousel-track::-webkit-scrollbar-thumb:hover {
+    background: #7DB8A8;
 }
 
 /* BOTONES DE FILTRO EN CARRUSEL */
@@ -1533,7 +1556,7 @@ footer {
 </head>
 <body>
 <div class="container">
-<!-- NAVEGACIÓN - SOLO 2 BOTONES -->
+<!-- NAVEGACIÓN SIMPLIFICADA - NO FIJADA -->
 <nav class="main-nav">
     <a href="#" class="nav-brand">
         <i class="fas fa-egg"></i>
@@ -1544,7 +1567,7 @@ footer {
             <i class="fas fa-home"></i> Inicio
         </button>
         <button class="nav-link" id="publishAdBtn">
-            <i class="fas fa-plus-circle"></i> Publique su Anuncio
+            <i class="fas fa-plus-circle"></i> Publicar Anuncio
         </button>
     </div>
 </nav>
@@ -1604,7 +1627,7 @@ footer {
     </div>
 </section>
 
-<!-- FILTROS POR COMUNIDAD AUTÓNOMA - CARRUSEL -->
+<!-- FILTROS POR COMUNIDAD AUTÓNOMA - CARRUSEL CON BANDERAS -->
 <section class="community-filters">
     <h2 class="community-title">
         <i class="fas fa-flag"></i> Filtrar por Comunidad Autónoma
@@ -1615,61 +1638,61 @@ footer {
                 <span>🇪🇸</span> Todas España
             </button>
             <button class="community-btn" data-community="andalucia">
-                <span>🏖️</span> Andalucía
+                <span>🇪🇸</span> Andalucía
             </button>
             <button class="community-btn" data-community="cataluna">
-                <span>🏰</span> Cataluña
+                <span>🇪🇸</span> Cataluña
             </button>
             <button class="community-btn" data-community="madrid">
-                <span>👑</span> Madrid
+                <span>🇪🇸</span> Madrid
             </button>
             <button class="community-btn" data-community="valencia">
-                <span>🍊</span> Valencia
+                <span>🇪🇸</span> Valencia
             </button>
             <button class="community-btn" data-community="galicia">
-                <span>🌊</span> Galicia
+                <span>🇪🇸</span> Galicia
             </button>
             <button class="community-btn" data-community="castilla_leon">
-                <span>🏞️</span> Castilla y León
+                <span>🇪🇸</span> Castilla y León
             </button>
             <button class="community-btn" data-community="castilla_mancha">
-                <span>🌾</span> Castilla-La Mancha
+                <span>🇪🇸</span> Castilla-La Mancha
             </button>
             <button class="community-btn" data-community="pais_vasco">
-                <span>⛰️</span> País Vasco
+                <span>🇪🇸</span> País Vasco
             </button>
             <button class="community-btn" data-community="aragon">
-                <span>🏔️</span> Aragón
+                <span>🇪🇸</span> Aragón
             </button>
             <button class="community-btn" data-community="murcia">
-                <span>☀️</span> Murcia
+                <span>🇪🇸</span> Murcia
             </button>
             <button class="community-btn" data-community="extremadura">
-                <span>🐗</span> Extremadura
+                <span>🇪🇸</span> Extremadura
             </button>
             <button class="community-btn" data-community="navarra">
-                <span>🏰</span> Navarra
+                <span>🇪🇸</span> Navarra
             </button>
             <button class="community-btn" data-community="asturias">
-                <span>🌲</span> Asturias
+                <span>🇪🇸</span> Asturias
             </button>
             <button class="community-btn" data-community="cantabria">
-                <span>⛵</span> Cantabria
+                <span>🇪🇸</span> Cantabria
             </button>
             <button class="community-btn" data-community="rioja">
-                <span>🍷</span> La Rioja
+                <span>🇪🇸</span> La Rioja
             </button>
             <button class="community-btn" data-community="islas_baleares">
-                <span>🏝️</span> Baleares
+                <span>🇪🇸</span> Baleares
             </button>
             <button class="community-btn" data-community="islas_canarias">
-                <span>🌴</span> Canarias
+                <span>🇪🇸</span> Canarias
             </button>
             <button class="community-btn" data-community="ceuta">
-                <span>🧱</span> Ceuta
+                <span>🇪🇸</span> Ceuta
             </button>
             <button class="community-btn" data-community="melilla">
-                <span>🧱</span> Melilla
+                <span>🇪🇸</span> Melilla
             </button>
         </div>
     </div>
@@ -1726,13 +1749,13 @@ footer {
                             <i class="fas fa-egg"></i> Rhode Island
                         </button>
                         <button class="breed-tab" data-target="breed-1-3">
-                            <i class="fas fa-egg"></i> Sussex
+                            <i class="fas fa-feather"></i> Sussex
                         </button>
                         <button class="breed-tab" data-target="breed-1-4">
                             <i class="fas fa-feather"></i> Orpington
                         </button>
                         <button class="breed-tab" data-target="breed-1-5">
-                            <i class="fas fa-feather"></i> Wyandotte
+                            <i class="fas fa-egg"></i> Wyandotte
                         </button>
                     </div>
                     
@@ -2608,7 +2631,7 @@ footer {
     </div>
     <div class="footer-nav">
         <a href="#"><i class="fas fa-home"></i> Inicio</a>
-        <a href="#" id="footerPublishBtn"><i class="fas fa-plus-circle"></i> Publique su Anuncio</a>
+        <a href="#" id="footerPublishBtn"><i class="fas fa-plus-circle"></i> Publicar Anuncio</a>
         <a href="#"><i class="fas fa-egg"></i> Tipos de Aves</a>
         <a href="#"><i class="fas fa-info-circle"></i> Sobre Nosotros</a>
         <a href="#"><i class="fas fa-phone"></i> Contacto</a>
@@ -2981,7 +3004,7 @@ ${name}`;
         window.open(whatsappUrl, '_blank');
     });
     
-    // Botón "Publique su Anuncio"
+    // Botón "Publicar Anuncio"
     const publishAdBtn = document.getElementById('publishAdBtn');
     const footerPublishBtn = document.getElementById('footerPublishBtn');
     
