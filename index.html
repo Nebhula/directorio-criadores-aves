@@ -56,7 +56,6 @@
   --telegram: #0088cc;
   --whatsapp: #25D366;
   --discord: #5865F2;
-  --signal: #3a76f0;
   --viber: #7360f2;
 }
 
@@ -373,7 +372,7 @@ body {
   color: var(--blue-600);
 }
 
-/* CARRUSEL CORREGIDO - FUNCIONA EN TODOS LOS DISPOSITIVOS */
+/* CARRUSEL MEJORADO - SIN SCROLLBAR EN PC */
 .carousel-container {
   width: 100%;
   position: relative;
@@ -388,30 +387,62 @@ body {
   gap: 1rem;
   scroll-behavior: smooth;
   
-  /* SIEMPRE mostrar scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: var(--green-500) var(--gray-200);
+  /* Ocultar scrollbar por defecto */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Scrollbar SIEMPRE visible */
+/* Ocultar scrollbar en Webkit */
 .carousel::-webkit-scrollbar {
-  height: 6px;
-  display: block !important;
+  display: none;
 }
 
-.carousel::-webkit-scrollbar-track {
-  background: var(--gray-200);
-  border-radius: 10px;
+/* Mostrar scrollbar solo cuando sea necesario en móvil */
+@media (max-width: 1023px) {
+  .carousel {
+    scrollbar-width: thin;
+    scrollbar-color: var(--green-500) var(--gray-200);
+  }
+  
+  .carousel::-webkit-scrollbar {
+    display: block;
+    height: 6px;
+  }
+  
+  .carousel::-webkit-scrollbar-track {
+    background: var(--gray-200);
+    border-radius: 10px;
+  }
+  
+  .carousel::-webkit-scrollbar-thumb {
+    background: var(--green-500);
+    border-radius: 10px;
+  }
+  
+  .carousel::-webkit-scrollbar-thumb:hover {
+    background: var(--green-600);
+  }
 }
 
-.carousel::-webkit-scrollbar-thumb {
-  background: var(--green-500);
-  border-radius: 10px;
-}
-
-.carousel::-webkit-scrollbar-thumb:hover {
-  background: var(--green-600);
+/* En PC, hacer que todo quepa sin scroll */
+@media (min-width: 1024px) {
+  .carousel-container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .carousel {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: hidden;
+    gap: 1.5rem;
+  }
+  
+  .carousel-item {
+    flex-shrink: 1;
+  }
 }
 
 .carousel-item {
@@ -431,11 +462,7 @@ body {
   }
   
   .carousel-item {
-    width: 9.5rem;
-  }
-  
-  .carousel::-webkit-scrollbar {
-    height: 8px;
+    width: 10rem;
   }
 }
 
@@ -670,7 +697,6 @@ body {
 .badge.platform.telegram { background: var(--telegram); }
 .badge.platform.whatsapp { background: var(--whatsapp); }
 .badge.platform.discord { background: var(--discord); }
-.badge.platform.signal { background: var(--signal); }
 .badge.platform.viber { background: var(--viber); }
 
 .badge-icon {
@@ -1758,7 +1784,25 @@ body {
       <h1>Directorio de Grupos de Aves</h1>
       <p>Conecta con grupos de ornitología y avicultura en España. Explora por categorías, regiones y encuentra tu comunidad perfecta.</p>
       
-      
+      <div class="promo-banner">
+        <div class="promo-content">
+          <div class="promo-content-inner">
+            <div class="promo-text">
+              <div class="promo-icon">
+                <i class="fas fa-file-certificate"></i>
+              </div>
+              <div class="promo-desc">
+                <h3>¿Eres criador?</h3>
+                <p>Obtén tu carné federativo y anillas oficiales</p>
+                <p class="text-xs">Federación online con la Asociación SOCNAS - Proceso 100% digital</p>
+              </div>
+            </div>
+            <a href="https://www.ejemplo.com/federacion" target="_blank" rel="noopener noreferrer" class="promo-link">
+              Federarse ahora
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <div class="search-container">
@@ -1834,7 +1878,6 @@ body {
             <option>Telegram</option>
             <option>WhatsApp</option>
             <option>Discord</option>
-            <option>Signal</option>
             <option>Viber</option>
           </select>
         </div>
@@ -1868,7 +1911,7 @@ body {
           <div class="stat-label">Categorías</div>
         </div>
         <div class="stat-item">
-          <div class="stat-value yellow" id="total-platforms">5</div>
+          <div class="stat-value yellow" id="total-platforms">4</div>
           <div class="stat-label">Plataformas</div>
         </div>
         <div class="stat-item">
@@ -1923,7 +1966,6 @@ body {
               <option>Telegram</option>
               <option>WhatsApp</option>
               <option>Discord</option>
-              <option>Signal</option>
               <option>Viber</option>
             </select>
           </div>
@@ -2130,7 +2172,6 @@ const platformIcons = {
   Telegram: '<i class="fab fa-telegram"></i>',
   WhatsApp: '<i class="fab fa-whatsapp"></i>',
   Discord: '<i class="fab fa-discord"></i>',
-  Signal: '<i class="fab fa-keybase"></i>', // Cambiado a icono más reconocible
   Viber: '<i class="fab fa-viber"></i>'
 };
 
@@ -2145,7 +2186,7 @@ function createPlatformBadge(platform) {
 // CATEGORÍAS
 const categoryTree = {
   todas: {name: "Todas las Aves", image: "https://placehold.co/150x150/3498db/ffffff?text=Todas+aves", subcategories: []},
-  cetaceas: {name: "Psitácidas", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjQ83d9PjehG9syyvX0j0r4Pi2volV3V-NsN6A5BfTduHB7YN2BIRk5VMwwW3YHVMWMSh2LuhGks9s9vn3Rz_uk30znNJtumnLmHQ4_CqmMCqoGCDRjlUwcf9gSW4M7JGkHik_FrLpR3vOuAga4vcz-xPmEGpjrGqsq_TbGdro9jUudu5Zdo2V2Eya6br0/s1600/nebhula%20%2879%29.png", subcategories: [
+  cetaceas: {name: "Psitácidas", image: "https://placehold.co/150x150/e74c3c/ffffff?text=🦜+Psitácidas", subcategories: [
     {id: 'agapornis', name: 'Agapornis', image: 'https://placehold.co/100x100/e74c3c/ffffff?text=🦜+Agapornis'},
     {id: 'periquitos', name: 'Periquitos', image: 'https://placehold.co/100x100/3498db/ffffff?text=🦜+Periquitos'},
     {id: 'ninfas', name: 'Ninfas', image: 'https://placehold.co/100x100/d35400/ffffff?text=🦜+Ninfas'},
@@ -2193,12 +2234,11 @@ const categoryTree = {
 };
 
 const spainRegions = ["Todas","Andalucía","Aragón","Asturias","Baleares","Canarias","Cantabria","Castilla-La Mancha","Castilla y León","Cataluña","Comunidad Valenciana","Extremadura","Galicia","Madrid","Murcia","Navarra","País Vasco","La Rioja","Ceuta","Melilla"];
-const platforms = ["Todas","Telegram","WhatsApp","Discord","Signal","Viber"];
+const platforms = ["Todas","Telegram","WhatsApp","Discord","Viber"];
 const platformColors = {
   "Telegram": "#0088cc",
   "WhatsApp": "#25D366", 
   "Discord": "#5865F2",
-  "Signal": "#3a76f0",
   "Viber": "#7360f2"
 };
 
@@ -2206,7 +2246,7 @@ const platformColors = {
 function createInitialGroups() {
   const groups = []; 
   let idCounter = 1;
-  const platformsList = ["Telegram", "WhatsApp", "Discord", "Signal", "Viber"];
+  const platformsList = ["Telegram", "WhatsApp", "Discord", "Viber"];
   
   Object.entries(categoryTree).forEach(([mainCatId, mainCatData]) => {
     if (mainCatId === 'todas') return;
