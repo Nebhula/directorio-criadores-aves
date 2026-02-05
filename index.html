@@ -103,6 +103,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  text-decoration: none;
 }
 
 .logo-icon {
@@ -111,11 +112,19 @@ body {
   border-radius: 0.5rem;
   padding: 0.375rem;
   box-shadow: var(--shadow-md);
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.logo-icon i {
-  font-size: 1.5rem;
-  color: var(--white);
+.logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .logo-text h1 {
@@ -124,6 +133,7 @@ body {
   white-space: nowrap;
   margin: 0;
   line-height: 1;
+  color: var(--white);
 }
 
 .nav-buttons {
@@ -363,26 +373,31 @@ body {
   color: var(--blue-600);
 }
 
-/* CARRUSEL DE CATEGORÍAS MEJORADO */
+/* CARRUSEL CORREGIDO - FUNCIONA EN TODOS LOS DISPOSITIVOS */
 .carousel-container {
   width: 100%;
-  overflow: hidden;
   position: relative;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
 }
 
 .carousel {
   display: flex;
   overflow-x: auto;
-  padding: 0.75rem 0.5rem;
+  padding: 1rem 0.5rem;
   gap: 1rem;
+  scroll-behavior: smooth;
+  
+  /* SIEMPRE mostrar scrollbar */
   scrollbar-width: thin;
   scrollbar-color: var(--green-500) var(--gray-200);
-  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
 
+/* Scrollbar SIEMPRE visible */
 .carousel::-webkit-scrollbar {
   height: 6px;
+  display: block !important;
 }
 
 .carousel::-webkit-scrollbar-track {
@@ -395,15 +410,32 @@ body {
   border-radius: 10px;
 }
 
+.carousel::-webkit-scrollbar-thumb:hover {
+  background: var(--green-600);
+}
+
 .carousel-item {
-  scroll-snap-align: start;
   flex-shrink: 0;
-  width: 8rem;
+  width: 8.5rem;
 }
 
 @media (min-width: 640px) {
   .carousel-item {
     width: 9rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel {
+    padding: 1rem;
+  }
+  
+  .carousel-item {
+    width: 9.5rem;
+  }
+  
+  .carousel::-webkit-scrollbar {
+    height: 8px;
   }
 }
 
@@ -535,17 +567,23 @@ body {
   color: var(--green-600);
 }
 
-/* GRID DE GRUPOS MEJORADO */
+/* GRID DE GRUPOS MEJORADO - CENTRADO Y MEJOR DISTRIBUIDO */
 .groups-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   padding: 0 0.5rem;
 }
 
+@media (min-width: 640px) {
+  .groups-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (min-width: 1024px) {
   .groups-grid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -559,6 +597,9 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 400px;
 }
 
 .group-card:hover {
@@ -698,14 +739,22 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 4.125rem;
 }
 
 .group-footer {
   margin-top: auto;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .group-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .group-meta {
@@ -713,6 +762,7 @@ body {
   gap: 0.75rem;
   font-size: 0.75rem;
   color: var(--gray-500);
+  flex-wrap: wrap;
 }
 
 .group-btn {
@@ -731,6 +781,13 @@ body {
   justify-content: center;
   gap: 0.5rem;
   flex-shrink: 0;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .group-btn {
+    width: auto;
+  }
 }
 
 .group-btn:hover {
@@ -1502,11 +1559,19 @@ body {
   display: inline-block;
   margin-bottom: 1rem;
   box-shadow: var(--shadow-md);
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
 }
 
-.footer-logo i {
-  font-size: 1.75rem;
-  color: var(--white);
+.footer-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .footer-title {
@@ -1635,20 +1700,6 @@ body {
   }
 }
 
-@media (min-width: 1024px) {
-  .carousel-container {
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  
-  .carousel {
-    justify-content: center;
-    flex-wrap: wrap;
-    overflow-x: visible;
-    padding: 1rem;
-  }
-}
-
 /* ANIMACIONES ADICIONALES */
 @keyframes fadeIn {
   from {
@@ -1669,29 +1720,27 @@ body {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* ICONOS PLATAFORMA ESPECÍFICOS */
-.platform-icon {
-  font-family: "Font Awesome 6 Brands";
+/* PARA GARANTIZAR QUE EL SCROLL FUNCIONE */
+html {
+  overflow-y: scroll;
 }
 
-.telegram-icon::before { content: "\f2c6"; }
-.whatsapp-icon::before { content: "\f232"; }
-.discord-icon::before { content: "\f392"; }
-.signal-icon::before { content: "\f3a3"; }
-.viber-icon::before { content: "\f409"; }
+body {
+  overflow-x: hidden;
+}
 </style>
 </head>
 <body>
 <header class="header">
   <div class="header-container">
-    <div class="logo-container">
+    <a href="#" class="logo-container" onclick="setView('home'); return false;">
       <div class="logo-icon">
-        <i class="fas fa-dove"></i>
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHT5KmAtwPnlvbIRmj7F0h038g0lzFBHMDl8hS0gMuAEDLqBPBbXiKDkdGLUZiMmrHRuUFl5djHGdS6O6-6bmHOZwiphnqoIayRrU4z7Tlhb6v-RhD_EQv6FMmT5-r32Ib4kj_f4lTCuJPoyLeJDxJHwkOG_dT8pwnZEdE8xT82-xSyJL5mrRzuOixdck/s1440/nebhula%20(77).png" alt="Bandadas.net Logo">
       </div>
       <div class="logo-text">
         <h1>Bandadas.net</h1>
       </div>
-    </div>
+    </a>
     <div class="nav-buttons">
       <button class="nav-btn active" data-view="home">Inicio</button>
       <button class="add-btn" data-view="add">
@@ -1709,10 +1758,22 @@ body {
       <h1>Directorio de Grupos de Aves</h1>
       <p>Conecta con grupos de ornitología y avicultura en España. Explora por categorías, regiones y encuentra tu comunidad perfecta.</p>
       
-      
-              
+      <div class="promo-banner">
+        <div class="promo-content">
+          <div class="promo-content-inner">
+            <div class="promo-text">
+              <div class="promo-icon">
+                <i class="fas fa-file-certificate"></i>
+              </div>
+              <div class="promo-desc">
+                <h3>¿Eres criador?</h3>
+                <p>Obtén tu carné federativo y anillas oficiales</p>
+                <p class="text-xs">Federación online con la Asociación SOCNAS - Proceso 100% digital</p>
+              </div>
             </div>
-            
+            <a href="https://www.ejemplo.com/federacion" target="_blank" rel="noopener noreferrer" class="promo-link">
+              Federarse ahora
+            </a>
           </div>
         </div>
       </div>
@@ -2060,7 +2121,7 @@ body {
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-logo">
-      <i class="fas fa-dove"></i>
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHT5KmAtwPnlvbIRmj7F0h038g0lzFBHMDl8hS0gMuAEDLqBPBbXiKDkdGLUZiMmrHRuUFl5djHGdS6O6-6bmHOZwiphnqoIayRrU4z7Tlhb6v-RhD_EQv6FMmT5-r32Ib4kj_f4lTCuJPoyLeJDxJHwkOG_dT8pwnZEdE8xT82-xSyJL5mrRzuOixdck/s1440/nebhula%20(77).png" alt="Bandadas.net Logo">
     </div>
     <p class="footer-title">Bandadas.net</p>
     <p class="footer-subtitle">Grupos de Ornitología y Avicultura • España</p>
@@ -2087,7 +2148,7 @@ const platformIcons = {
   Telegram: '<i class="fab fa-telegram"></i>',
   WhatsApp: '<i class="fab fa-whatsapp"></i>',
   Discord: '<i class="fab fa-discord"></i>',
-  Signal: '<i class="fab fa-signal-messenger"></i>',
+  Signal: '<i class="fab fa-keybase"></i>', // Cambiado a icono más reconocible
   Viber: '<i class="fab fa-viber"></i>'
 };
 
@@ -2098,6 +2159,157 @@ function createPlatformBadge(platform) {
     ${platform}
   </span>`;
 }
+
+// CATEGORÍAS
+const categoryTree = {
+  todas: {name: "Todas las Aves", image: "https://placehold.co/150x150/3498db/ffffff?text=Todas+aves", subcategories: []},
+  cetaceas: {name: "Psitácidas", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg4mbkfuKPrd6Wzx87vHI-yGxizjNQOoFQC9eyjqI0-C1FZu2-w4OPZ5xO5hw4kFgU_GaYs1t8XNHM-0uK9V0UXd2qni03PjBzuBZ8yybKxU3djPEofdm2l5Wb-VSDi4Xgyu4n009maBQ3Sd46tkrtqQ3JLXY-GgZuKqqPvuAoAs6iQgjqNcVV_eh4ACSo/s1600/nebhula%20%2867%29.png", subcategories: [
+    {id: 'agapornis', name: 'Agapornis', image: 'https://placehold.co/100x100/e74c3c/ffffff?text=🦜+Agapornis'},
+    {id: 'periquitos', name: 'Periquitos', image: 'https://placehold.co/100x100/3498db/ffffff?text=🦜+Periquitos'},
+    {id: 'ninfas', name: 'Ninfas', image: 'https://placehold.co/100x100/d35400/ffffff?text=🦜+Ninfas'},
+    {id: 'cacatuas', name: 'Cacatúas', image: 'https://placehold.co/100x100/f39c12/ffffff?text=🦜+Cacatúas'},
+    {id: 'guacamayos', name: 'Guacamayos', image: 'https://placehold.co/100x100/c0392b/ffffff?text=🦜+Guacamayos'},
+    {id: 'amazonas', name: 'Amazonas', image: 'https://placehold.co/100x100/8e44ad/ffffff?text=🦜+Amazonas'}
+  ]},
+  canaricultura: {name: "Canaricultura", image: "https://placehold.co/150x150/f1c40f/ffffff?text=🐦+Canarios", subcategories: [
+    {id: 'canarios', name: 'Canarios', image: 'https://placehold.co/100x100/f1c40f/ffffff?text=🐦+Canarios'},
+    {id: 'jilgueros', name: 'Jilgueros', image: 'https://placehold.co/100x100/d35400/ffffff?text=🐦+Jilgueros'},
+    {id: 'diamantes', name: 'Diamantes', image: 'https://placehold.co/100x100/9b59b6/ffffff?text=🐦+Diamantes'},
+    {id: 'mandarines', name: 'Mandarines', image: 'https://placehold.co/100x100/8e44ad/ffffff?text=🐦+Mandarines'},
+    {id: 'gould', name: 'Gould', image: 'https://placehold.co/100x100/2980b9/ffffff?text=🐦+Gould'}
+  ]},
+  silvestres: {name: "Silvestres", image: "https://placehold.co/150x150/27ae60/ffffff?text=🦅+Silvestres", subcategories: [
+    {id: 'rapaces', name: 'Rapaces', image: 'https://placehold.co/100x100/2c3e50/ffffff?text=🦅+Rapaces'},
+    {id: 'paseriformes', name: 'Paseriformes', image: 'https://placehold.co/100x100/27ae60/ffffff?text=🐦+Paseriformes'},
+    {id: 'acuaticas', name: 'Acuáticas', image: 'https://placehold.co/100x100/1abc9c/ffffff?text=🦆+Acuáticas'},
+    {id: 'migratorias', name: 'Migratorias', image: 'https://placehold.co/100x100/2980b9/ffffff?text=✈️+Migratorias'}
+  ]},
+  exoticos: {name: "Exóticos", image: "https://placehold.co/150x150/e67e22/ffffff?text=🦜+Exóticos", subcategories: [
+    {id: 'loros', name: 'Loros', image: 'https://placehold.co/100x100/e67e22/ffffff?text=🦜+Loros'},
+    {id: 'papagayos', name: 'Papagayos', image: 'https://placehold.co/100x100/c0392b/ffffff?text=🦜+Papagayos'},
+    {id: 'tucanes', name: 'Tucanes', image: 'https://placehold.co/100x100/f39c12/ffffff?text=🐦+Tucanes'},
+    {id: 'aves_paraiso', name: 'Aves del Paraíso', image: 'https://placehold.co/100x100/8e44ad/ffffff?text=🌈+Paraíso'}
+  ]},
+  avicultura: {name: "Avicultura", image: "https://placehold.co/150x150/16a085/ffffff?text=🐔+Avicultura", subcategories: [
+    {id: 'gallinas', name: 'Gallinas', image: 'https://placehold.co/100x100/16a085/ffffff?text=🐔+Gallinas'},
+    {id: 'patos', name: 'Patos', image: 'https://placehold.co/100x100/2980b9/ffffff?text=🦆+Patos'},
+    {id: 'pavos', name: 'Pavos', image: 'https://placehold.co/100x100/8c7b6b/ffffff?text=🦃+Pavos'},
+    {id: 'faisanes', name: 'Faisanes', image: 'https://placehold.co/100x100/d35400/ffffff?text=🦚+Faisanes'}
+  ]},
+  colombicultura: {name: "Colombicultura", image: "https://placehold.co/150x150/7f8c8d/ffffff?text=🕊️+Palomas", subcategories: [
+    {id: 'mensajeras', name: 'Mensajeras', image: 'https://placehold.co/100x100/7f8c8d/ffffff?text=🕊️+Mensajeras'},
+    {id: 'buzos', name: 'Buzos', image: 'https://placehold.co/100x100/95a5a6/ffffff?text=🐦+Buzos'},
+    {id: 'volatineras', name: 'Volatineras', image: 'https://placehold.co/100x100/34495e/ffffff?text=🕊️+Volatineras'},
+    {id: 'exposicion', name: 'Exposición', image: 'https://placehold.co/100x100/2c3e50/ffffff?text=🏆+Exposición'}
+  ]},
+  ecologia: {name: "Ecología", image: "https://placehold.co/150x150/27ae60/ffffff?text=🌿+Ecología", subcategories: [
+    {id: 'conservacion', name: 'Conservación', image: 'https://placehold.co/100x100/27ae60/ffffff?text=🌿+Conservación'},
+    {id: 'habitat', name: 'Hábitat', image: 'https://placehold.co/100x100/2ecc71/ffffff?text=🌳+Hábitat'},
+    {id: 'alimentacion', name: 'Alimentación', image: 'https://placehold.co/100x100/f39c12/ffffff?text=🌾+Alimentación'},
+    {id: 'cria_responsable', name: 'Cría Responsable', image: 'https://placehold.co/100x100/1abc9c/ffffff?text=🐣+Cría'}
+  ]}
+};
+
+const spainRegions = ["Todas","Andalucía","Aragón","Asturias","Baleares","Canarias","Cantabria","Castilla-La Mancha","Castilla y León","Cataluña","Comunidad Valenciana","Extremadura","Galicia","Madrid","Murcia","Navarra","País Vasco","La Rioja","Ceuta","Melilla"];
+const platforms = ["Todas","Telegram","WhatsApp","Discord","Signal","Viber"];
+const platformColors = {
+  "Telegram": "#0088cc",
+  "WhatsApp": "#25D366", 
+  "Discord": "#5865F2",
+  "Signal": "#3a76f0",
+  "Viber": "#7360f2"
+};
+
+// FUNCIÓN PARA CREAR GRUPOS INICIALES
+function createInitialGroups() {
+  const groups = []; 
+  let idCounter = 1;
+  const platformsList = ["Telegram", "WhatsApp", "Discord", "Signal", "Viber"];
+  
+  Object.entries(categoryTree).forEach(([mainCatId, mainCatData]) => {
+    if (mainCatId === 'todas') return;
+    
+    mainCatData.subcategories.forEach((subcat, subcatIndex) => {
+      for (let i = 0; i < 3; i++) {
+        const platform = platformsList[(subcatIndex + i) % platformsList.length];
+        const regionIndex = (subcatIndex + i) % spainRegions.length;
+        const region = spainRegions[regionIndex === 0 ? 1 : regionIndex];
+        const members = `${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 9)}k`;
+        
+        groups.push({
+          id: idCounter++, 
+          platform, 
+          name: `${subcat.name} ${region}`, 
+          link: `https://${platform.toLowerCase()}.com/${mainCatId}_${subcat.id}_${i}`,
+          description: `Comunidad activa de ${subcat.name.toLowerCase()} en ${region}. Compartimos experiencias, consejos y organizamos eventos.`,
+          longDescription: `¡Bienvenidos a la comunidad de ${subcat.name} ${region}!\nAquí encontrarás:\n- Consejos especializados de criadores experimentados\n- Solución de problemas de salud y comportamiento\n- Intercambio de experiencias y buenas prácticas\n- Recomendaciones de veterinarios especializados\n- Organización de quedadas y exposiciones regionales\n- Alertas sobre enfermedades y cuidados específicos`,
+          rules: `1. Respeto absoluto a todas las aves y criadores\n2. Prohibido el comercio ilegal de especies\n3. Compartir siempre fuentes de información verificadas\n4. No difundir rumores sin contrastar\n5. Mantener un ambiente de ayuda mutua y colaboración`,
+          members, 
+          mainCategory: mainCatId, 
+          subCategory: subcat.id, 
+          image: subcat.image, 
+          region, 
+          country: "España"
+        });
+      }
+    });
+  });
+  
+  return groups;
+}
+
+// ESTADO DE LA APLICACIÓN
+let state = {
+  view: 'home', 
+  selectedMainCategory: 'todas', 
+  selectedSubCategory: null, 
+  selectedPlatform: 'Todas',
+  selectedRegion: 'Todas', 
+  selectedCountry: 'ES', 
+  searchTerm: '', 
+  selectedGroup: null,
+  groups: createInitialGroups()
+};
+
+// ELEMENTOS DEL DOM
+const mainCategoriesContainer = document.getElementById('main-categories');
+const subcategoriesContainer = document.getElementById('subcategories');
+const subcategoriesSection = document.getElementById('subcategories-section');
+const subcategoriesTitle = document.getElementById('subcategories-title');
+const subcategoryCategoryName = document.getElementById('subcategory-category-name');
+const regionFilter = document.getElementById('region-filter');
+const platformFilter = document.getElementById('platform-filter');
+const searchInput = document.getElementById('search-input');
+const searchResult = document.getElementById('search-result');
+const resultsInfo = document.getElementById('results-info');
+const resultsCount = document.getElementById('results-count');
+const groupsGrid = document.getElementById('groups-grid');
+const emptyState = document.getElementById('empty-state');
+const emptyDesc = document.getElementById('empty-desc');
+const resetFiltersBtn = document.getElementById('reset-filters');
+const totalCommunitiesEl = document.getElementById('total-communities');
+const totalMembersEl = document.getElementById('total-members');
+const navBtns = document.querySelectorAll('.nav-btn');
+const addBtns = document.querySelectorAll('[data-view="add"]');
+const homeView = document.querySelector('.home-view');
+const addView = document.querySelector('.add-view');
+const backToHomeBtn = document.getElementById('back-to-home');
+const cancelAddBtn = document.getElementById('cancel-add');
+const addGroupForm = document.getElementById('add-group-form');
+const mainCategorySelect = document.getElementById('main-category');
+const subCategorySelect = document.getElementById('sub-category');
+const modalBackdrop = document.getElementById('modal-backdrop');
+const modalContent = document.getElementById('modal-content');
+const modalCloseBtn = document.getElementById('modal-close');
+const modalProfileImg = document.getElementById('modal-profile-img');
+const modalTitle = document.getElementById('modal-title');
+const modalBadges = document.getElementById('modal-badges');
+const modalDescription = document.getElementById('modal-description');
+const modalRulesSection = document.getElementById('modal-rules-section');
+const modalRules = document.getElementById('modal-rules');
+const modalBirdType = document.getElementById('modal-bird-type');
+const modalJoinBtn = document.getElementById('modal-join-btn');
+const currentYearEl = document.getElementById('current-year');
 
 // FUNCIÓN PARA RENDERIZAR GRUPOS CON ICONOS OFICIALES
 function renderGroups() {
@@ -2234,176 +2446,7 @@ function showGroupModal(group) {
   document.body.style.overflow = 'hidden';
 }
 
-// Resto del código JavaScript...
-document.getElementById('current-year').textContent = new Date().getFullYear();
-
-const categoryTree = {
-  todas: {name: "Todas las Aves", image: "https://placehold.co/150x150/3498db/ffffff?text=Todas+aves", subcategories: []},
-  cetaceas: {name: "Psitácidas", image: "https://placehold.co/150x150/e74c3c/ffffff?text=🦜+Psitácidas", subcategories: [
-    {id: 'agapornis', name: 'Agapornis', image: 'https://placehold.co/100x100/e74c3c/ffffff?text=🦜+Agapornis'},
-    {id: 'periquitos', name: 'Periquitos', image: 'https://placehold.co/100x100/3498db/ffffff?text=🦜+Periquitos'},
-    {id: 'ninfas', name: 'Ninfas', image: 'https://placehold.co/100x100/d35400/ffffff?text=🦜+Ninfas'},
-    {id: 'cacatuas', name: 'Cacatúas', image: 'https://placehold.co/100x100/f39c12/ffffff?text=🦜+Cacatúas'},
-    {id: 'guacamayos', name: 'Guacamayos', image: 'https://placehold.co/100x100/c0392b/ffffff?text=🦜+Guacamayos'},
-    {id: 'amazonas', name: 'Amazonas', image: 'https://placehold.co/100x100/8e44ad/ffffff?text=🦜+Amazonas'}
-  ]},
-  canaricultura: {name: "Canaricultura", image: "https://placehold.co/150x150/f1c40f/ffffff?text=🐦+Canarios", subcategories: [
-    {id: 'canarios', name: 'Canarios', image: 'https://placehold.co/100x100/f1c40f/ffffff?text=🐦+Canarios'},
-    {id: 'jilgueros', name: 'Jilgueros', image: 'https://placehold.co/100x100/d35400/ffffff?text=🐦+Jilgueros'},
-    {id: 'diamantes', name: 'Diamantes', image: 'https://placehold.co/100x100/9b59b6/ffffff?text=🐦+Diamantes'},
-    {id: 'mandarines', name: 'Mandarines', image: 'https://placehold.co/100x100/8e44ad/ffffff?text=🐦+Mandarines'},
-    {id: 'gould', name: 'Gould', image: 'https://placehold.co/100x100/2980b9/ffffff?text=🐦+Gould'}
-  ]},
-  silvestres: {name: "Silvestres", image: "https://placehold.co/150x150/27ae60/ffffff?text=🦅+Silvestres", subcategories: [
-    {id: 'rapaces', name: 'Rapaces', image: 'https://placehold.co/100x100/2c3e50/ffffff?text=🦅+Rapaces'},
-    {id: 'paseriformes', name: 'Paseriformes', image: 'https://placehold.co/100x100/27ae60/ffffff?text=🐦+Paseriformes'},
-    {id: 'acuaticas', name: 'Acuáticas', image: 'https://placehold.co/100x100/1abc9c/ffffff?text=🦆+Acuáticas'},
-    {id: 'migratorias', name: 'Migratorias', image: 'https://placehold.co/100x100/2980b9/ffffff?text=✈️+Migratorias'}
-  ]},
-  exoticos: {name: "Exóticos", image: "https://placehold.co/150x150/e67e22/ffffff?text=🦜+Exóticos", subcategories: [
-    {id: 'loros', name: 'Loros', image: 'https://placehold.co/100x100/e67e22/ffffff?text=🦜+Loros'},
-    {id: 'papagayos', name: 'Papagayos', image: 'https://placehold.co/100x100/c0392b/ffffff?text=🦜+Papagayos'},
-    {id: 'tucanes', name: 'Tucanes', image: 'https://placehold.co/100x100/f39c12/ffffff?text=🐦+Tucanes'},
-    {id: 'aves_paraiso', name: 'Aves del Paraíso', image: 'https://placehold.co/100x100/8e44ad/ffffff?text=🌈+Paraíso'}
-  ]},
-  avicultura: {name: "Avicultura", image: "https://placehold.co/150x150/16a085/ffffff?text=🐔+Avicultura", subcategories: [
-    {id: 'gallinas', name: 'Gallinas', image: 'https://placehold.co/100x100/16a085/ffffff?text=🐔+Gallinas'},
-    {id: 'patos', name: 'Patos', image: 'https://placehold.co/100x100/2980b9/ffffff?text=🦆+Patos'},
-    {id: 'pavos', name: 'Pavos', image: 'https://placehold.co/100x100/8c7b6b/ffffff?text=🦃+Pavos'},
-    {id: 'faisanes', name: 'Faisanes', image: 'https://placehold.co/100x100/d35400/ffffff?text=🦚+Faisanes'}
-  ]},
-  colombicultura: {name: "Colombicultura", image: "https://placehold.co/150x150/7f8c8d/ffffff?text=🕊️+Palomas", subcategories: [
-    {id: 'mensajeras', name: 'Mensajeras', image: 'https://placehold.co/100x100/7f8c8d/ffffff?text=🕊️+Mensajeras'},
-    {id: 'buzos', name: 'Buzos', image: 'https://placehold.co/100x100/95a5a6/ffffff?text=🐦+Buzos'},
-    {id: 'volatineras', name: 'Volatineras', image: 'https://placehold.co/100x100/34495e/ffffff?text=🕊️+Volatineras'},
-    {id: 'exposicion', name: 'Exposición', image: 'https://placehold.co/100x100/2c3e50/ffffff?text=🏆+Exposición'}
-  ]},
-  ecologia: {name: "Ecología", image: "https://placehold.co/150x150/27ae60/ffffff?text=🌿+Ecología", subcategories: [
-    {id: 'conservacion', name: 'Conservación', image: 'https://placehold.co/100x100/27ae60/ffffff?text=🌿+Conservación'},
-    {id: 'habitat', name: 'Hábitat', image: 'https://placehold.co/100x100/2ecc71/ffffff?text=🌳+Hábitat'},
-    {id: 'alimentacion', name: 'Alimentación', image: 'https://placehold.co/100x100/f39c12/ffffff?text=🌾+Alimentación'},
-    {id: 'cria_responsable', name: 'Cría Responsable', image: 'https://placehold.co/100x100/1abc9c/ffffff?text=🐣+Cría'}
-  ]}
-};
-
-const spainRegions = ["Todas","Andalucía","Aragón","Asturias","Baleares","Canarias","Cantabria","Castilla-La Mancha","Castilla y León","Cataluña","Comunidad Valenciana","Extremadura","Galicia","Madrid","Murcia","Navarra","País Vasco","La Rioja","Ceuta","Melilla"];
-const platforms = ["Todas","Telegram","WhatsApp","Discord","Signal","Viber"];
-const platformColors = {
-  "Telegram": "#0088cc",
-  "WhatsApp": "#25D366", 
-  "Discord": "#5865F2",
-  "Signal": "#3a76f0",
-  "Viber": "#7360f2"
-};
-
-function createInitialGroups() {
-  const groups = []; 
-  let idCounter = 1;
-  const platformsList = ["Telegram", "WhatsApp", "Discord", "Signal", "Viber"];
-  
-  Object.entries(categoryTree).forEach(([mainCatId, mainCatData]) => {
-    if (mainCatId === 'todas') return;
-    
-    mainCatData.subcategories.forEach((subcat, subcatIndex) => {
-      for (let i = 0; i < 3; i++) {
-        const platform = platformsList[(subcatIndex + i) % platformsList.length];
-        const regionIndex = (subcatIndex + i) % spainRegions.length;
-        const region = spainRegions[regionIndex === 0 ? 1 : regionIndex];
-        const members = `${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 9)}k`;
-        
-        groups.push({
-          id: idCounter++, 
-          platform, 
-          name: `${subcat.name} ${region}`, 
-          link: `https://${platform.toLowerCase()}.com/${mainCatId}_${subcat.id}_${i}`,
-          description: `Comunidad activa de ${subcat.name.toLowerCase()} en ${region}. Compartimos experiencias, consejos y organizamos eventos.`,
-          longDescription: `¡Bienvenidos a la comunidad de ${subcat.name} ${region}!\nAquí encontrarás:\n- Consejos especializados de criadores experimentados\n- Solución de problemas de salud y comportamiento\n- Intercambio de experiencias y buenas prácticas\n- Recomendaciones de veterinarios especializados\n- Organización de quedadas y exposiciones regionales\n- Alertas sobre enfermedades y cuidados específicos`,
-          rules: `1. Respeto absoluto a todas las aves y criadores\n2. Prohibido el comercio ilegal de especies\n3. Compartir siempre fuentes de información verificadas\n4. No difundir rumores sin contrastar\n5. Mantener un ambiente de ayuda mutua y colaboración`,
-          members, 
-          mainCategory: mainCatId, 
-          subCategory: subcat.id, 
-          image: subcat.image, 
-          region, 
-          country: "España"
-        });
-      }
-    });
-  });
-  
-  return groups;
-}
-
-let state = {
-  view: 'home', 
-  selectedMainCategory: 'todas', 
-  selectedSubCategory: null, 
-  selectedPlatform: 'Todas',
-  selectedRegion: 'Todas', 
-  selectedCountry: 'ES', 
-  searchTerm: '', 
-  selectedGroup: null,
-  groups: createInitialGroups()
-};
-
-// Elementos del DOM
-const mainCategoriesContainer = document.getElementById('main-categories');
-const subcategoriesContainer = document.getElementById('subcategories');
-const subcategoriesSection = document.getElementById('subcategories-section');
-const subcategoriesTitle = document.getElementById('subcategories-title');
-const subcategoryCategoryName = document.getElementById('subcategory-category-name');
-const regionFilter = document.getElementById('region-filter');
-const platformFilter = document.getElementById('platform-filter');
-const searchInput = document.getElementById('search-input');
-const searchResult = document.getElementById('search-result');
-const resultsInfo = document.getElementById('results-info');
-const resultsCount = document.getElementById('results-count');
-const groupsGrid = document.getElementById('groups-grid');
-const emptyState = document.getElementById('empty-state');
-const emptyDesc = document.getElementById('empty-desc');
-const resetFiltersBtn = document.getElementById('reset-filters');
-const totalCommunitiesEl = document.getElementById('total-communities');
-const totalMembersEl = document.getElementById('total-members');
-const navBtns = document.querySelectorAll('.nav-btn');
-const addBtns = document.querySelectorAll('[data-view="add"]');
-const homeView = document.querySelector('.home-view');
-const addView = document.querySelector('.add-view');
-const backToHomeBtn = document.getElementById('back-to-home');
-const cancelAddBtn = document.getElementById('cancel-add');
-const addGroupForm = document.getElementById('add-group-form');
-const mainCategorySelect = document.getElementById('main-category');
-const subCategorySelect = document.getElementById('sub-category');
-const modalBackdrop = document.getElementById('modal-backdrop');
-const modalContent = document.getElementById('modal-content');
-const modalCloseBtn = document.getElementById('modal-close');
-const modalProfileImg = document.getElementById('modal-profile-img');
-const modalTitle = document.getElementById('modal-title');
-const modalBadges = document.getElementById('modal-badges');
-const modalDescription = document.getElementById('modal-description');
-const modalRulesSection = document.getElementById('modal-rules-section');
-const modalRules = document.getElementById('modal-rules');
-const modalBirdType = document.getElementById('modal-bird-type');
-const modalJoinBtn = document.getElementById('modal-join-btn');
-const currentYearEl = document.getElementById('current-year');
-
-function init() {
-  currentYearEl.textContent = new Date().getFullYear();
-  renderMainCategories();
-  renderGroups();
-  updateStats();
-  setupEventListeners();
-  updateSubcategories();
-  
-  // Configurar evento para el cambio de categoría principal
-  mainCategorySelect.addEventListener('change', function(e) {
-    updateSubcategoriesDropdown(e.target.value);
-  });
-  
-  // Inicializar subcategorías si hay una categoría seleccionada
-  if (mainCategorySelect.value) {
-    updateSubcategoriesDropdown(mainCategorySelect.value);
-  }
-}
-
+// FUNCIÓN PARA RENDERIZAR CATEGORÍAS PRINCIPALES
 function renderMainCategories() {
   mainCategoriesContainer.innerHTML = '';
   
@@ -2423,6 +2466,7 @@ function renderMainCategories() {
   });
 }
 
+// FUNCIÓN PARA ACTUALIZAR SUBCATEGORÍAS
 function updateSubcategories() {
   if (state.selectedMainCategory === 'todas') {
     subcategoriesSection.style.display = 'none';
@@ -2450,6 +2494,7 @@ function updateSubcategories() {
   });
 }
 
+// FUNCIÓN PARA ACTUALIZAR SUBCATEGORÍAS EN FORMULARIO
 function updateSubcategoriesDropdown(mainCategoryId) {
   const subcategories = categoryTree[mainCategoryId].subcategories;
   subCategorySelect.innerHTML = '<option value="" disabled selected>Selecciona una subcategoría</option>';
@@ -2462,24 +2507,7 @@ function updateSubcategoriesDropdown(mainCategoryId) {
   });
 }
 
-function parseMemberCount(membersStr) {
-  if (typeof membersStr !== 'string') return 0;
-  if (membersStr.includes('k')) {
-    const num = parseFloat(membersStr.replace('k', ''));
-    return isNaN(num) ? 0 : num * 1000;
-  }
-  return parseInt(membersStr) || 0;
-}
-
-function calculateTotalMembers() {
-  return state.groups.reduce((total, group) => total + parseMemberCount(group.members), 0);
-}
-
-function updateStats() {
-  totalCommunitiesEl.textContent = state.groups.length;
-  totalMembersEl.textContent = calculateTotalMembers().toLocaleString('es-ES');
-}
-
+// FUNCIÓN PARA FILTRAR GRUPOS
 function filterGroups() {
   return state.groups.filter(group => {
     if (state.selectedCountry !== 'ES' && group.country !== state.selectedCountry) return false;
@@ -2506,6 +2534,92 @@ function filterGroups() {
   });
 }
 
+// FUNCIÓN PARA CALCULAR MIEMBROS TOTALES
+function parseMemberCount(membersStr) {
+  if (typeof membersStr !== 'string') return 0;
+  if (membersStr.includes('k')) {
+    const num = parseFloat(membersStr.replace('k', ''));
+    return isNaN(num) ? 0 : num * 1000;
+  }
+  return parseInt(membersStr) || 0;
+}
+
+function calculateTotalMembers() {
+  return state.groups.reduce((total, group) => total + parseMemberCount(group.members), 0);
+}
+
+// FUNCIÓN PARA ACTUALIZAR ESTADÍSTICAS
+function updateStats() {
+  totalCommunitiesEl.textContent = state.groups.length;
+  totalMembersEl.textContent = calculateTotalMembers().toLocaleString('es-ES');
+}
+
+// MANEJADORES DE EVENTOS
+function handleMainCategoryClick(categoryId) {
+  state.selectedMainCategory = categoryId;
+  state.selectedSubCategory = null;
+  
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  const activeBtn = document.querySelector(`.category-btn[data-category="${categoryId}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  updateSubcategories();
+  renderGroups();
+}
+
+function handleSubCategoryClick(subcategoryId) {
+  state.selectedSubCategory = state.selectedSubCategory === subcategoryId ? null : subcategoryId;
+  
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  if (state.selectedSubCategory) {
+    const activeBtn = document.querySelector(`.category-btn[data-subcategory="${subcategoryId}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+  }
+  
+  renderGroups();
+}
+
+function setView(viewName) {
+  state.view = viewName;
+  
+  if (viewName === 'home') {
+    homeView.classList.add('active');
+    homeView.style.display = 'block';
+    addView.style.display = 'none';
+    
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      if (btn.dataset.view === 'home') btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+  } else {
+    homeView.classList.remove('active');
+    homeView.style.display = 'none';
+    addView.style.display = 'block';
+    
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+  }
+}
+
+function closeModal() {
+  state.selectedGroup = null;
+  modalContent.classList.remove('show');
+  
+  setTimeout(() => {
+    modalBackdrop.classList.remove('show');
+  }, 300);
+  
+  document.body.style.overflow = '';
+}
+
+// CONFIGURAR EVENT LISTENERS
 function setupEventListeners() {
   mainCategoriesContainer.addEventListener('click', (e) => {
     if (e.target.closest('.category-btn')) {
@@ -2636,6 +2750,10 @@ function setupEventListeners() {
     updateStats();
   });
   
+  mainCategorySelect.addEventListener('change', function(e) {
+    updateSubcategoriesDropdown(e.target.value);
+  });
+  
   groupsGrid.addEventListener('click', (e) => {
     if (e.target.closest('.group-name-btn') || e.target.closest('.group-btn')) {
       const groupId = e.target.closest('[data-group-id]').dataset.groupId;
@@ -2654,70 +2772,22 @@ function setupEventListeners() {
   });
 }
 
-function handleMainCategoryClick(categoryId) {
-  state.selectedMainCategory = categoryId;
-  state.selectedSubCategory = null;
-  
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  
-  const activeBtn = document.querySelector(`.category-btn[data-category="${categoryId}"]`);
-  if (activeBtn) activeBtn.classList.add('active');
-  
+// INICIALIZACIÓN
+function init() {
+  currentYearEl.textContent = new Date().getFullYear();
+  renderMainCategories();
+  renderGroups();
+  updateStats();
+  setupEventListeners();
   updateSubcategories();
-  renderGroups();
-}
-
-function handleSubCategoryClick(subcategoryId) {
-  state.selectedSubCategory = state.selectedSubCategory === subcategoryId ? null : subcategoryId;
   
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  
-  if (state.selectedSubCategory) {
-    const activeBtn = document.querySelector(`.category-btn[data-subcategory="${subcategoryId}"]`);
-    if (activeBtn) activeBtn.classList.add('active');
-  }
-  
-  renderGroups();
-}
-
-function setView(viewName) {
-  state.view = viewName;
-  
-  if (viewName === 'home') {
-    homeView.classList.add('active');
-    homeView.style.display = 'block';
-    addView.style.display = 'none';
-    
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      if (btn.dataset.view === 'home') btn.classList.add('active');
-      else btn.classList.remove('active');
-    });
-  } else {
-    homeView.classList.remove('active');
-    homeView.style.display = 'none';
-    addView.style.display = 'block';
-    
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
+  // Inicializar subcategorías si hay una categoría seleccionada
+  if (mainCategorySelect.value) {
+    updateSubcategoriesDropdown(mainCategorySelect.value);
   }
 }
 
-function closeModal() {
-  state.selectedGroup = null;
-  modalContent.classList.remove('show');
-  
-  setTimeout(() => {
-    modalBackdrop.classList.remove('show');
-  }, 300);
-  
-  document.body.style.overflow = '';
-}
-
+// EJECUTAR AL CARGAR LA PÁGINA
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
