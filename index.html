@@ -30,6 +30,9 @@
 --rose-600: #e11d48;
 --emerald-50: #ecfdf5;
 --emerald-600: #059669;
+--gold-500: #fbbf24;
+--gold-600: #d97706;
+--gold-700: #b45309;
 --gray-50: #f9fafb;
 --gray-100: #f3f4f6;
 --gray-200: #e5e7eb;
@@ -180,6 +183,31 @@ font-weight: 600;
 .highlight-btn i {
     font-size: 1rem;
 }
+.socnas-btn {
+    background: linear-gradient(to right, var(--gold-600), var(--gold-700));
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 0.375rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-decoration: none;
+}
+.socnas-btn:hover {
+    box-shadow: var(--shadow-md);
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.socnas-btn i {
+    font-size: 1rem;
+}
 .add-btn {
 background: linear-gradient(to right, var(--yellow-400), var(--orange-500));
 color: var(--white);
@@ -286,6 +314,9 @@ color: var(--blue-600);
 }
 .section-title.purple i {
     color: var(--purple-600);
+}
+.section-title.gold i {
+    color: var(--gold-600);
 }
 /* CARRUSEL CORREGIDO - FUNCIONA PERFECTO EN PC Y MÓVIL */
 .carousel-container {
@@ -935,10 +966,118 @@ font-size: 2.5rem;
 .stat-value.yellow { color: var(--yellow-500); }
 .stat-value.rose { color: var(--rose-600); }
 .stat-value.purple { color: var(--purple-600); }
+.stat-value.gold { color: var(--gold-600); }
 .stat-label {
 font-size: 0.875rem;
 color: var(--gray-600);
 font-weight: 500;
+}
+/* SECCIÓN SOCNAS EN HOME */
+.socnas-promo-home {
+    margin: 3rem 0;
+    background: linear-gradient(to right, var(--gold-50), var(--amber-50));
+    border-radius: var(--border-radius-2xl);
+    padding: 2rem;
+    border: 2px solid var(--gold-200);
+    box-shadow: var(--shadow-lg);
+    max-width: 64rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+.socnas-promo-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+}
+@media (min-width: 640px) {
+    .socnas-promo-content {
+        flex-direction: row;
+        text-align: left;
+        align-items: center;
+    }
+}
+.socnas-promo-icon {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-700));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-md);
+}
+.socnas-promo-icon i {
+    font-size: 2rem;
+    color: var(--white);
+}
+.socnas-promo-text {
+    flex: 1;
+}
+.socnas-promo-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.75rem;
+}
+@media (min-width: 640px) {
+    .socnas-promo-title {
+        font-size: 1.75rem;
+    }
+}
+.socnas-promo-desc {
+    color: var(--gray-700);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+.socnas-promo-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+@media (min-width: 640px) {
+    .socnas-promo-buttons {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+}
+.socnas-promo-btn {
+    background: linear-gradient(to right, var(--gold-600), var(--gold-700));
+    color: var(--white);
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
+.socnas-promo-btn:hover {
+    opacity: 0.9;
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+.socnas-promo-link {
+    color: var(--gold-700);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.socnas-promo-link:hover {
+    color: var(--gold-900);
+    text-decoration: underline;
 }
 /* PROMOCIÓN ASOCIACIÓN */
 .association-promo {
@@ -2077,6 +2216,13 @@ font-size: 0.75rem;
 .highlight-btn span {
     display: none;
 }
+.socnas-btn {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+}
+.socnas-btn span {
+    display: none;
+}
 .add-btn {
 padding: 0.25rem 0.75rem;
 font-size: 0.75rem;
@@ -2191,11 +2337,15 @@ transform: translateY(0);
 </a>
 <div class="nav-buttons">
 <button class="nav-btn active" onclick="showHome()">Inicio</button>
-
+<button class="nav-btn" onclick="showHighlightPage()">Destaca tu grupo</button>
 <button class="highlight-btn" onclick="showHighlightPage()">
     <i class="fas fa-crown"></i>
     <span>Destacar</span>
 </button>
+<a href="https://www.socnas.org/" target="_blank" rel="noopener noreferrer" class="socnas-btn">
+    <i class="fas fa-ring"></i>
+    <span>SOCNAS</span>
+</a>
 <button class="add-btn" onclick="showAddForm()">
 <i class="fas fa-plus"></i>
 <span>Añadir grupo</span>
@@ -2251,6 +2401,29 @@ Categorías Principales
         </div>
     </div>
 </section>
+
+<!-- SECCIÓN SOCNAS EN HOME -->
+<section class="socnas-promo-home">
+    <div class="socnas-promo-content">
+        <div class="socnas-promo-icon">
+            <i class="fas fa-ring"></i>
+        </div>
+        <div class="socnas-promo-text">
+            <h3 class="socnas-promo-title">¿Eres criador de aves?</h3>
+            <p class="socnas-promo-desc">Federate con <strong>SOCNAS</strong> y obtén tu carné oficial de criador y anillas federativas numeradas. Todo el proceso 100% online con validez nacional e internacional.</p>
+            <div class="socnas-promo-buttons">
+                <a href="https://www.socnas.org/" target="_blank" rel="noopener noreferrer" class="socnas-promo-btn">
+                    <i class="fas fa-file-certificate"></i>
+                    Federarse con SOCNAS
+                </a>
+                <a href="https://www.socnas.org/beneficios" target="_blank" rel="noopener noreferrer" class="socnas-promo-link">
+                    Ver beneficios <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="filters-section">
 <div class="filters-container">
 <div class="filter-group">
@@ -2584,27 +2757,28 @@ Más información <i class="fas fa-arrow-right"></i>
         </button>
     </section>
 
-    <div class="association-promo">
-        <div class="association-content">
-            <div class="association-icon">
-                <i class="fas fa-handshake"></i>
+    <!-- SECCIÓN SOCNAS EN PÁGINA DE DESTACADOS -->
+    <section class="socnas-promo-home" style="margin-top: 3rem;">
+        <div class="socnas-promo-content">
+            <div class="socnas-promo-icon">
+                <i class="fas fa-award"></i>
             </div>
-            <div class="association-text">
-                <h3 class="association-title">¿Eres una asociación o criadero profesional?</h3>
-                <p class="association-desc">Contáctanos para planes personalizados con descuentos especiales, promoción cruzada y beneficios exclusivos para profesionales del sector.</p>
-                <div class="association-buttons">
-                    <button class="association-btn" onclick="contactProfessional()">
-                        <i class="fas fa-envelope"></i>
-                        Contacto Profesional
-                    </button>
-                    <a href="tel:+34912345678" class="association-link">
-                        <i class="fas fa-phone"></i>
-                        Llámanos: +34 912 345 678
+            <div class="socnas-promo-text">
+                <h3 class="socnas-promo-title">Federate como criador profesional</h3>
+                <p class="socnas-promo-desc">Destaca tu grupo y federate con <strong>SOCNAS</strong> para obtener credibilidad total. Carné oficial de criador + anillas federativas + visibilidad premium en Bandadas.net.</p>
+                <div class="socnas-promo-buttons">
+                    <a href="https://www.socnas.org/" target="_blank" rel="noopener noreferrer" class="socnas-promo-btn">
+                        <i class="fas fa-ring"></i>
+                        Visitar SOCNAS.org
                     </a>
+                    <button class="association-btn" onclick="showHome()">
+                        <i class="fas fa-home"></i>
+                        Volver al Directorio
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
 <!-- FORMULARIO DE AÑADIR GRUPO (EN LA MISMA PÁGINA) -->
@@ -2865,8 +3039,8 @@ Normas de la comunidad
 </div>
 <div class="modal-promo-text">
 <p>¿Eres criador de <span id="modal-bird-type">aves</span>? Obtén tu carné federativo y anillas oficiales</p>
-<a href="https://www.ejemplo.com/federacion-modal" target="_blank" rel="noopener noreferrer" class="modal-promo-link">
-Federarse con la Asociación Titulí
+<a href="https://www.socnas.org/" target="_blank" rel="noopener noreferrer" class="modal-promo-link">
+Federarse con SOCNAS
 </a>
 </div>
 </div>
@@ -2881,8 +3055,8 @@ Unirse a la comunidad
 <p>Dirección: Calle del Pájaro 123, 28001 Madrid</p>
 <p>Email: contacto@bandadas.net | Tel: +34 912 345 678</p>
 <p class="mt-2">
-<a href="https://www.ejemplo.com/asociacion" target="_blank" rel="noopener noreferrer">
-Asociación Titulí - Federación de Criadores
+<a href="https://www.socnas.org/" target="_blank" rel="noopener noreferrer">
+SOCNAS - Asociación Oficial de Criadores
 </a>
 </p>
 </div>
@@ -2897,16 +3071,16 @@ Asociación Titulí - Federación de Criadores
 <p class="footer-title">Bandadas.net</p>
 <p class="footer-subtitle">Grupos de Ornitología y Avicultura • España</p>
 <div class="footer-promo">
-<a href="#" onclick="showHighlightPage(); return false;" class="footer-promo-link">
-<i class="fas fa-crown"></i>
-Destaca Tu Grupo
+<a href="https://www.socnas.org/" target="_blank" rel="noopener noreferrer" class="footer-promo-link">
+<i class="fas fa-ring"></i>
+Federarse con SOCNAS
 </a>
 </div>
 <p class="footer-tagline">
 <i class="fas fa-dove"></i>
 Directorio de comunidades de aves
 </p>
-<p class="footer-desc">Proyecto de la Asociación Titulí para fomentar la ornitología y avicultura responsable</p>
+<p class="footer-desc">Proyecto en colaboración con SOCNAS para fomentar la ornitología y avicultura responsable</p>
 <p class="footer-copyright">© <span id="current-year"></span> Bandadas.net. Todos los derechos reservados.</p>
 </div>
 </footer>
