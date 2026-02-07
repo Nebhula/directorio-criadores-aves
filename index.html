@@ -243,6 +243,7 @@ max-width: 80rem;
 margin: 0 auto;
 padding: 1.5rem;
 width: 100%;
+    flex: 1 0 auto; /* Cambia de "flex: 1" a esto */
 }
 /* HERO SECTION - SIN BANNER NARANJA */
 .hero {
@@ -2017,6 +2018,10 @@ background: linear-gradient(to right, var(--green-700), var(--blue-800));
 color: var(--white);
 padding: 1.5rem;
 width: 100%;
+margin-top: auto; /* ESTA ES LA LÍNEA CLAVE QUE FALTA */
+    flex-shrink: 0; /* Y ESTA TAMBIÉN */
+
+    
 }
 .footer-container {
 max-width: 80rem;
